@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PChatWidgetsWidget</class>
+ <widget class="QWidget" name="PChatWidgetsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>264</width>
+    <height>299</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PChatWidgetsWidget</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="_TopLayout">
+     <item>
+      <widget class="QComboBox" name="_WidgetCombo">
+       <item>
+        <property name="text">
+         <string>Global</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Trade</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Guild</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Party</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Local</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Whisper</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>--------</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_AddWidgetBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Add custom widget</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="PoePal.qrc">
+         <normaloff>:/PoePal/Resources/32x32/comment_add.png</normaloff>:/PoePal/Resources/32x32/comment_add.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_DeleteWidgetBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Remove custom widget</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="PoePal.qrc">
+         <normaloff>:/PoePal/Resources/32x32/comment_delete.png</normaloff>:/PoePal/Resources/32x32/comment_delete.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="_WidgetStack"/>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="PoePal.qrc"/>
+ </resources>
+ <connections/>
+</ui>

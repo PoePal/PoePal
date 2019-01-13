@@ -1,0 +1,3 @@
+PoePal.exe
+ssleay32.dll
+libeay32.dll

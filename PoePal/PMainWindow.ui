@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PMainWindow</class>
+ <widget class="QMainWindow" name="PMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>950</width>
+    <height>792</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PoePal</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="PoePal.qrc">
+    <normaloff>:/PoePal/Resources/logo.png</normaloff>:/PoePal/Resources/logo.png</iconset>
+  </property>
+  <property name="documentMode">
+   <bool>true</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::GroupedDragging</set>
+  </property>
+  <widget class="QWidget" name="_MainWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QMdiArea" name="_MDI"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="_ChatToolbar">
+   <property name="windowTitle">
+    <string>Chat Toolbar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="_GlobalAction"/>
+   <addaction name="_TradeAction"/>
+   <addaction name="_GuildAction"/>
+   <addaction name="_PartyAction"/>
+   <addaction name="_LocalAction"/>
+   <addaction name="_WhisperAction"/>
+  </widget>
+  <widget class="QToolBar" name="_MacroToolbar">
+   <property name="windowTitle">
+    <string>Macro Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="_HideoutAction"/>
+   <addaction name="_MenagerieAction"/>
+  </widget>
+  <widget class="QToolBar" name="_DebugToolbar">
+   <property name="windowTitle">
+    <string>Debug Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="_MessagesAction"/>
+   <addaction name="_ConsoleAction"/>
+   <addaction name="_UpdateAction"/>
+  </widget>
+  <action name="_MessagesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="message-log" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/text_document.png</normaloff>:/PoePal/Resources/32x32/text_document.png</iconset>
+   </property>
+   <property name="text">
+    <string>Messages</string>
+   </property>
+  </action>
+  <action name="_GuildAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="guild" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/shield.png</normaloff>:/PoePal/Resources/32x32/shield.png</iconset>
+   </property>
+   <property name="text">
+    <string>Guild</string>
+   </property>
+  </action>
+  <action name="_GlobalAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="global" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/earth_night.png</normaloff>:/PoePal/Resources/32x32/earth_night.png</iconset>
+   </property>
+   <property name="text">
+    <string>Global</string>
+   </property>
+  </action>
+  <action name="_PartyAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="party" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/party_hat.png</normaloff>:/PoePal/Resources/32x32/party_hat.png</iconset>
+   </property>
+   <property name="text">
+    <string>Party</string>
+   </property>
+  </action>
+  <action name="_TradeAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="trade" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/money_dollar.png</normaloff>:/PoePal/Resources/32x32/money_dollar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Trade</string>
+   </property>
+  </action>
+  <action name="_LocalAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="local" resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/events.png</normaloff>:/PoePal/Resources/32x32/events.png</iconset>
+   </property>
+   <property name="text">
+    <string>Local</string>
+   </property>
+  </action>
+  <action name="_HideoutAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/house.png</normaloff>:/PoePal/Resources/32x32/house.png</iconset>
+   </property>
+   <property name="text">
+    <string>Hideout</string>
+   </property>
+  </action>
+  <action name="_MenagerieAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/bug.png</normaloff>:/PoePal/Resources/32x32/bug.png</iconset>
+   </property>
+   <property name="text">
+    <string>Menagerie</string>
+   </property>
+  </action>
+  <action name="_WhisperAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/account_menu.png</normaloff>:/PoePal/Resources/32x32/account_menu.png</iconset>
+   </property>
+   <property name="text">
+    <string>Whisper</string>
+   </property>
+  </action>
+  <action name="_ConsoleAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/application_xp_terminal.png</normaloff>:/PoePal/Resources/32x32/application_xp_terminal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Console</string>
+   </property>
+  </action>
+  <action name="_UpdateAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/download_for_windows.png</normaloff>:/PoePal/Resources/32x32/download_for_windows.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check for Update</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="PoePal.qrc"/>
+ </resources>
+ <connections/>
+</ui>
