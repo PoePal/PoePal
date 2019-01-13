@@ -215,6 +215,7 @@ if not exist $(OutDir)ssleay32.dll powershell -Command "Start-Process cmd -Argum
     <Image Include="Resources\icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="Resources\updates.html" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -167,5 +167,6 @@
     <None Include="Resources\updates.html">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
