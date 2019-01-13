@@ -15,8 +15,7 @@
  */
 #include "PLogWidget.h"
 #include "PApplication.h"
-#include "PLogMessage.h"
-#include "PLogScanner.h"
+#include "PLogMessageModel.h"
 #include <QScrollBar>
 
 PLogWidget::PLogWidget(QWidget *parent)
@@ -24,31 +23,9 @@ PLogWidget::PLogWidget(QWidget *parent)
 {
 	ui.setupUi(this);
 	auto app = qobject_cast<PApplication *>(qApp);
-	Q_ASSERT(app);
-	connect(app->GetLogScanner(), &PLogScanner::Initialized, this, &PLogWidget::OnInitialized);
+	ui._ListView->setModel(app->GetLogMessageModel());
 }
 
 PLogWidget::~PLogWidget()
 {
-}
-
-void PLogWidget::OnInitialized()
-{
-	auto app = qobject_cast<PApplication *>(qApp);
-	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
-	QString contents;
-	for (const auto &msg : scanner->GetLogMessages())
-	{
-		contents += msg->ToString() + "\n";
-	}
-	contents.resize(contents.length() - 1);
-	ui._Text->setPlainText(contents);
-	ui._Text->verticalScrollBar()->setValue(ui._Text->verticalScrollBar()->maximum());
-	connect(scanner, &PLogScanner::NewMessage, this, &PLogWidget::OnNewMessage);
-}
-
-void PLogWidget::OnNewMessage(PLogMessage *message)
-{
-	ui._Text->appendPlainText(message->ToString());
 }

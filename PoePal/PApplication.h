@@ -20,6 +20,7 @@
 #include <QPointer>
 
 class PChatSettings;
+class PLogMessageModel;
 class PLogScanner;
 class PMainWindow;
 class QJSEngine;
@@ -36,6 +37,11 @@ class PApplication : public QApplication
 	 * The log scanner belonging to the application.
 	 */
 	Q_PROPERTY(PLogScanner *logScanner READ GetLogScanner)
+
+	/**
+	 * The log message model belonging to the application.
+	 */
+	Q_PROPERTY(PLogMessageModel *logMessageModel READ GetLogMessageModel);
 
 	/**
 	 * The main window of the application.
@@ -69,6 +75,13 @@ public:
 	 *   The log scanner.
 	 */
 	PLogScanner * GetLogScanner() const;
+
+	/**
+	 * Retrieves the log message model.
+	 * @return
+	 *   The log message model.
+	 */
+	PLogMessageModel * GetLogMessageModel() const;
 
 	/**
 	 * Retrieves the JS engine.
@@ -113,6 +126,11 @@ private:
 	 * The log scanner.
 	 */
 	PLogScanner *_LogScanner = nullptr;
+
+	/**
+	 * The log message model.
+	 */
+	PLogMessageModel *_LogModel = nullptr;
 
 	/**
 	 * The JS engine for the application.

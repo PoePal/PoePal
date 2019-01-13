@@ -16,12 +16,11 @@
 #include "PApplication.h"
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QQmlEngine>
 #include "PApplicationUpdate.h"
 #include "PChatWidget.h"
 #include "PLogMessage.h"
+#include "PLogMessageModel.h"
 #include "PLogScanner.h"
 #include "PMainWindow.h"
 #include "windows.h"
@@ -126,6 +125,7 @@ void PApplication::Init()
 		_JSEngine->globalObject().setProperty("application", _JSEngine->newQObject(this));
 	}
 	if (!_LogScanner)_LogScanner = new PLogScanner(this);
+	if (!_LogModel) _LogModel = new PLogMessageModel(this); // This must happen after _LogScanner
 	if (!_MainWindow)
 	{
 		_MainWindow = new PMainWindow();
@@ -143,6 +143,11 @@ void PApplication::Init()
 PLogScanner * PApplication::GetLogScanner() const
 {
 	return _LogScanner;
+}
+
+PLogMessageModel * PApplication::GetLogMessageModel() const
+{
+	return _LogModel;
 }
 
 QJSEngine * PApplication::GetJSEngine() const

@@ -41,20 +41,6 @@ public:
 	 */
 	virtual ~PLogWidget();
 
-private slots:
-
-	/**
-	 * Slot called when the log scanner is initialized.
-	 */
-	void OnInitialized();
-
-	/**
-	 * Slot called when a new message is received from the log scanner.
-	 * @param[in] message
-	 *   The new message.
-	 */
-	void OnNewMessage(PLogMessage *message);
-
 private:
 	Ui::PLogWidget ui;
 };
