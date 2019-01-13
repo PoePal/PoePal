@@ -212,5 +212,5 @@ private:
 	/**
 	 * Indicates whether or not the first update check has finished.
 	 */
-	bool _FirstUpdateCheck = false;
+	bool _FirstUpdateCheck = true;
 };

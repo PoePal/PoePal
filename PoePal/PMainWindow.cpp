@@ -26,6 +26,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QSettings>
+#include <QTimer>
 #include <QToolButton>
 
 PMainWindow::PMainWindow(QWidget *parent)
@@ -75,6 +76,8 @@ PMainWindow::PMainWindow(QWidget *parent)
 	});
 	connect(_ChatDropDown, &QToolButton::clicked, this, &PMainWindow::ConfigureCustomChatWidgets);
 	connect(ui._UpdateAction, &QAction::triggered, this, &PMainWindow::CheckForUpdates);
+
+	QTimer::singleShot(1, this, &PMainWindow::CheckForUpdates);
 
 	restoreGeometry(settings.value(QStringLiteral("geometry")).toByteArray());
 	restoreState(settings.value(QStringLiteral("state")).toByteArray());
@@ -191,9 +194,13 @@ void PMainWindow::OnUpdateRequestFinished()
 	auto jsonData = QJsonDocument::fromJson(data);
 	PApplicationUpdate update(jsonData.object());
 	reply->deleteLater();
-	if (!update.IsNewer() && !_FirstUpdateCheck)
+	if (!update.IsNewer())
 	{
-		QMessageBox::information(this, tr("Up-to-date"), tr("PoePal is already up-to-date."));
+		if (!_FirstUpdateCheck)
+		{
+			QMessageBox::information(this, tr("Up-to-date"), tr("PoePal is already up-to-date."));
+		}
+		_FirstUpdateCheck = false;
 		return;
 	}
 	else
