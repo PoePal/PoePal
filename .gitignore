@@ -1,0 +1,7 @@
+.vs/
+*/GeneratedFiles/*
+*/x64/*
+version.txt
+installer/ReleaseNotes.txt
+installer/config/config.xml
+installer/packages/com.PoePal.PoePal/meta/package.xml

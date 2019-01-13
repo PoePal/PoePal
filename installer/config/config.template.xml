@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>PoePal</Name>
+    <Version>0.0.0</Version>
+    <Title>PoePal</Title>
+    <Publisher>Phillip Doup</Publisher>
+	<ProductUrl>https://github.com/PoePal/PoePal</ProductUrl>
+	<InstallerWindowIcon>../../PoePal/Resources/logo.png</InstallerWindowIcon>
+    <StartMenuDir>PoePal</StartMenuDir>
+    <TargetDir>@HomeDir@/AppData/Local/PoePal</TargetDir>
+	<ControlScript>controlscript.qs</ControlScript>
+	<MaintenanceToolName>uninstall</MaintenanceToolName>
+</Installer>
