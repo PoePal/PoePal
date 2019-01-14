@@ -98,9 +98,12 @@ public slots:
 	void CheckForUpdates();
 
 	/**
-	 * Displays a modal message that doesn't block and has a cancel.
-	 * You can then use the CancelCurrentAction signal to cancel whatever you're dong.
+	 * Whispers a given player.
+	 * This ensures that the whisper dock widget is shown and sets the entry field to that player.
+	 * @param[in] player
+	 *   The player to whisper.
 	 */
+	void Whisper(const QString &player);
 
 protected:
 

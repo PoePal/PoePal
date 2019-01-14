@@ -127,6 +127,13 @@ public slots:
 	 */
 	void Remove();
 
+	/**
+	 * Sets the whisper target for the widget.
+	 * @param[in] target
+	 *   The whisper target for the widget.
+	 */
+	void SetWhisperTarget(const QString &target);
+
 protected:
 
 	/**
@@ -135,11 +142,6 @@ protected:
 	virtual bool eventFilter(QObject *watched, QEvent *evt) override;
 
 private slots:
-
-	/**
-	 * Slot called when the log scanner is initialized.
-	 */
-	void OnInitialized();
 
 	/**
 	 * Slot called when a new messages is received.
@@ -154,11 +156,6 @@ private slots:
 	void OnEntryChanged();
 
 	/**
-	 * Slot called when the scrollbar changes.
-	 */
-	void OnScroll();
-
-	/**
 	 * Slot called when a channel is selected.
 	 */
 	void OnChannelSelected();
@@ -167,6 +164,20 @@ private slots:
 	 * Slot called when the tab selection changes.
 	 */
 	void OnTabSelected();
+
+	/**
+	 * Slot called when a context menu is requested in the display edit.
+	 * @param[in] pos
+	 *   The position where the context menu was requested.
+	 */
+	void OnContextMenuRequested(const QPoint &pos);
+
+	/**
+	 * Slot called when a contextual menu action is triggered.
+	 * @param[in] action
+	 *   The action that was triggered.
+	 */
+	void OnContextMenuTriggered(QAction *action);
 
 private:
 
@@ -263,6 +274,41 @@ private:
 	 * The channel selection menu.
 	 */
 	QMenu *_ChannelMenu = nullptr;
+
+	/**
+	 * The context menu for text display.
+	 */
+	QMenu *_ContextMenu = nullptr;
+
+	/**
+	 * The action to invite a player into your party.
+	 */
+	QAction *_InviteAction = nullptr;
+
+	/**
+	 * The action to send a friend invitation to a player.
+	 */
+	QAction *_FriendAction = nullptr;
+
+	/**
+	 * The action to ignore a player.
+	 */
+	QAction *_IgnoreAction = nullptr;
+
+	/**
+	 * The action to get the player information for a player.
+	 */
+	QAction *_WhoisAction = nullptr;
+
+	/**
+	 * The action to copy the selected text.
+	 */
+	QAction *_CopyAction = nullptr;
+
+	/**
+	 * The action to whisper a player.
+	 */
+	QAction *_WhisperAction = nullptr;
 
 	Ui::PChatWidget ui;
 };

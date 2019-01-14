@@ -143,6 +143,17 @@ void PMainWindow::CheckForUpdates()
 	connect(reply, &QNetworkReply::finished, this, &PMainWindow::OnUpdateRequestFinished);
 }
 
+void PMainWindow::Whisper(const QString &player)
+{
+	auto widget = _DefaultChatWidgets.value(PLogMessage::Whisper, nullptr);
+	if (widget)
+	{
+		ui._WhisperAction->setChecked(true);
+		widget->raise();
+		widget->SetWhisperTarget(player);
+	}
+}
+
 void PMainWindow::closeEvent(QCloseEvent *evt)
 {
 	QSettings settings;

@@ -31,7 +31,11 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QListView" name="_ListView"/>
+     <widget class="QListView" name="_ListView">
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

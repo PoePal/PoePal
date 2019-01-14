@@ -26,6 +26,57 @@
 #include <QStringBuilder>
 #include <QStyleOptionTab>
 #include <QTabBar>
+#include <QTextBlock>
+
+/**
+ * Class associates a text block with a message.
+ */
+class PTextBlockMessageData : public QTextBlockUserData
+{
+public:
+
+	/**
+	 * Creates a new data pointing to a given message.
+	 * @param[in] message
+	 *   The message to which the text block will point.
+	 */
+	PTextBlockMessageData(PLogMessage *message);
+
+	/**
+	 * Destructor.
+	 */
+	virtual ~PTextBlockMessageData();
+
+	/**
+	 * Retrieves the log message.
+	 * @return
+	 *   The log message.
+	 */
+	PLogMessage * GetLogMessage() const;
+
+private:
+
+	/**
+	 * The log message being lined with a text block.
+	 */
+	QPointer<PLogMessage> _Message;
+};
+
+PTextBlockMessageData::PTextBlockMessageData(PLogMessage *message):
+_Message(message)
+{
+
+}
+
+PTextBlockMessageData::~PTextBlockMessageData()
+{
+
+}
+
+PLogMessage * PTextBlockMessageData::GetLogMessage() const
+{
+	return _Message.data();
+}
 
 class PHorizontalTabStyle : public QProxyStyle
 {
@@ -162,64 +213,87 @@ void PChatWidget::Remove()
 	app->GetMainWindow()->RemoveCustomChatWidget(this);
 }
 
+void PChatWidget::SetWhisperTarget(const QString &target)
+{
+	ui._EntryEdit->setPlainText("@" + target + " ");
+	auto cursor = ui._EntryEdit->textCursor();
+	cursor.movePosition(QTextCursor::End);
+	ui._EntryEdit->setTextCursor(cursor);
+	ui._EntryEdit->setFocus(Qt::TabFocusReason);
+}
+
 bool PChatWidget::eventFilter(QObject *watched, QEvent *evt)
 {
-	if (evt->type() == QEvent::KeyPress)
+	if (watched == ui._EntryEdit)
 	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
-		if (keyEvent->key() == Qt::Key_Return)
+		if (evt->type() == QEvent::KeyPress)
 		{
-			Submit();
-			return true;
+			QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
+			if (keyEvent->key() == Qt::Key_Return)
+			{
+				Submit();
+				return true;
+			}
+		}
+	}
+	else if (watched == ui._DisplayEdit)
+	{
+		if (evt->type() == QEvent::ContextMenu)
+		{
+			QContextMenuEvent *contextEvent = static_cast<QContextMenuEvent *>(evt);
+			_ContextMenu->popup(contextEvent->pos());
 		}
 	}
 	return QDockWidget::eventFilter(watched, evt);
 }
 
-void PChatWidget::OnInitialized()
-{
-}
-
 void PChatWidget::OnNewMessage(PLogMessage *message)
 {
-	if (CheckMessage(message))
+	if (!CheckMessage(message)) return;
+	if (ui._DisplayEdit->isVisible())
 	{
-		if (ui._DisplayEdit->isVisible()) ui._DisplayEdit->appendHtml(FormatMessage(message));
+		auto doc = ui._DisplayEdit->document();
+		QTextCursor cursor(doc);
+		cursor.movePosition(QTextCursor::End);
+		if(!doc->isEmpty()) cursor.insertBlock();
+		cursor.block().setUserData(new PTextBlockMessageData(message));
+		cursor.insertHtml(FormatMessage(message));
+		ui._DisplayEdit->ensureCursorVisible();
+	}
+	else
+	{
+		int numTabs = ui._WhisperTabs->tabBar()->count();
+		int idx = -1;
+		for (int t = 0; t < numTabs; ++t)
+		{
+			if (ui._WhisperTabs->tabBar()->tabText(t) == message->GetSubject()) idx = t;
+		}
+		if (message->GetSubject().isEmpty())
+		{
+			if (numTabs > 0) idx = 0;
+			else return;
+		}
+		if (idx >= 0)
+		{
+			auto isSel = ui._WhisperTabs->currentIndex() == idx;
+			ui._WhisperTabs->tabBar()->moveTab(idx, 0);
+			if(isSel) ui._WhisperTabs->setCurrentIndex(0);
+			else if(message->IsIncoming()) ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
+		}
 		else
 		{
-			int numTabs = ui._WhisperTabs->tabBar()->count();
-			int idx = -1;
-			for (int t = 0; t < numTabs; ++t)
+			auto textEdit = new QPlainTextEdit(ui._WhisperTabs);
+			textEdit->setReadOnly(true);
+			ui._WhisperTabs->insertTab(0, textEdit, message->GetSubject());
+			if (numTabs > 0 && message->IsIncoming())
 			{
-				if (ui._WhisperTabs->tabBar()->tabText(t) == message->GetSubject()) idx = t;
+				ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
 			}
-			if (message->GetSubject().isEmpty())
-			{
-				if (numTabs > 0) idx = 0;
-				else return;
-			}
-			if (idx >= 0)
-			{
-				auto isSel = ui._WhisperTabs->currentIndex() == idx;
-				ui._WhisperTabs->tabBar()->moveTab(idx, 0);
-				if(isSel) ui._WhisperTabs->setCurrentIndex(0);
-				else if(message->IsIncoming()) ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
-			}
-			else
-			{
-				auto textEdit = new QPlainTextEdit(ui._WhisperTabs);
-				textEdit->setReadOnly(true);
-				ui._WhisperTabs->insertTab(0, textEdit, message->GetSubject());
-				if (numTabs > 0 && message->IsIncoming())
-				{
-					ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
-				}
-				else ui._WhisperTabs->tabBar()->setCurrentIndex(0);
-			}
-			auto edit = qobject_cast<QPlainTextEdit *>(ui._WhisperTabs->widget(0));
-			Q_ASSERT(edit);
-			edit->appendHtml(FormatMessage(message));
+			else ui._WhisperTabs->tabBar()->setCurrentIndex(0);
 		}
+		auto edit = qobject_cast<QPlainTextEdit *>(ui._WhisperTabs->widget(0));
+		Q_ASSERT(edit);
+		edit->appendHtml(FormatMessage(message));
 	}
 }
 
@@ -230,16 +304,6 @@ void PChatWidget::OnEntryChanged()
 	auto height = doc->size().height();
 	ui._EntryEdit->setMinimumHeight(height+2);
 	UpdateChannelForPrefix();
-}
-
-void PChatWidget::OnScroll()
-{
-	int newTop = qMin(_TopIdx - 100, 0);
-	QString contents;
-
-	for (int m = _TopIdx-1; m >= newTop; --m)
-	{
-	}
 }
 
 void PChatWidget::OnChannelSelected()
@@ -270,6 +334,49 @@ void PChatWidget::OnTabSelected()
 		auto cursor = ui._EntryEdit->textCursor();
 		cursor.movePosition(QTextCursor::End);
 		ui._EntryEdit->setTextCursor(cursor);
+	}
+}
+
+void PChatWidget::OnContextMenuRequested(const QPoint &pos)
+{
+	_ContextMenu->popup(ui._DisplayEdit->mapToGlobal(pos));
+	auto cursor = ui._DisplayEdit->cursorForPosition(pos);
+	auto userData = static_cast<PTextBlockMessageData *>(cursor.block().userData());
+	if (userData) _ContextMenu->setProperty("msg", QVariant::fromValue(userData->GetLogMessage()));
+	else
+	{
+		_ContextMenu->setDisabled(true);
+		_ContextMenu->setProperty("msg", QVariant());
+	}
+}
+
+void PChatWidget::OnContextMenuTriggered(QAction *action)
+{
+	auto message = _ContextMenu->property("msg").value<PLogMessage *>();
+	if (!message) return;
+	else if (action == _FriendAction)
+	{
+		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Friend);
+	}
+	else if (action == _InviteAction)
+	{
+		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Invite);
+	}
+	else if (action == _IgnoreAction)
+	{
+		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Ignore);
+	}
+	else if (action == _WhoisAction)
+	{
+		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Whois);
+	}
+	else if (action == _WhisperAction)
+	{
+		auto app = qobject_cast<PApplication *>(qApp);
+		Q_ASSERT(app);
+		auto mainWin = app->GetMainWindow();
+		Q_ASSERT(mainWin);
+		mainWin->Whisper(message->GetSubject());
 	}
 }
 
@@ -312,7 +419,8 @@ QString PChatWidget::FormatMessage(PLogMessage *message) const
 	QString text;
 	if (message->GetSubtype() == PLogMessage::Chat)
 	{
-		text += "<span style=\"color: " + color + "\">" + message->GetTime().toString("[hh:mm] ");
+		text += "<span style=\"color: " + color + "; font-weight: bold;\">" + 
+			message->GetTime().toString("[hh:mm] ");
 		if (message->GetChannel() != PLogMessage::InvalidChannel)
 		{
 			text += PLogMessage::GetPrefixFromChannel(message->GetChannel());
@@ -337,13 +445,24 @@ void PChatWidget::Initialize()
 	Q_ASSERT(app);
 	ui._WhisperTabs->tabBar()->setStyle(new PHorizontalTabStyle());
 	connect(ui._EntryEdit, &QPlainTextEdit::textChanged, this, &PChatWidget::OnEntryChanged);
-	connect(ui._DisplayEdit->verticalScrollBar(), &QScrollBar::sliderMoved, this, &PChatWidget::OnScroll);
+	connect(ui._DisplayEdit, &QWidget::customContextMenuRequested, this, &PChatWidget::OnContextMenuRequested);
 	connect(ui._WhisperTabs->tabBar(), &QTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
 	ui._EntryEdit->installEventFilter(this);
 	PrependMessages();
 	auto scanner = app->GetLogScanner();
 	ui._DisplayEdit->verticalScrollBar()->setValue(ui._DisplayEdit->verticalScrollBar()->maximum());
 	connect(scanner, &PLogScanner::NewMessage, this, &PChatWidget::OnNewMessage);
+	_ContextMenu = new QMenu(this);
+	_FriendAction = _ContextMenu->addAction(tr("Add Friend"));
+	_InviteAction = _ContextMenu->addAction(tr("Invite to Party"));
+	_IgnoreAction = _ContextMenu->addAction(tr("Ignore"));
+	_WhoisAction = _ContextMenu->addAction(tr("Who Is This?"));
+	_WhisperAction = _ContextMenu->addAction(tr("Whisper"));
+	_ContextMenu->addSeparator();
+	_CopyAction = _ContextMenu->addAction(tr("Copy Text"));
+	connect(_ContextMenu, &QMenu::triggered, this, &PChatWidget::OnContextMenuTriggered);
+	connect(ui._DisplayEdit, &QPlainTextEdit::copyAvailable, _CopyAction, &QAction::setEnabled);
+	connect(_CopyAction, &QAction::triggered, ui._DisplayEdit, &QPlainTextEdit::copy);
 	UpdateForChannels();
 }
 

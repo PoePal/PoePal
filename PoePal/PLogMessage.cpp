@@ -260,6 +260,24 @@ void PLogMessage::SendChatMessage(Channel channel, const QString &message,
 	});
 }
 
+void PLogMessage::SendPlayerAction(const QString &target, PlayerAction action)
+{
+	static QByteArrayList actionList{
+		"invite",
+		"kick",
+		"friend",
+		"unfriend",
+		"accept",
+		"ignore",
+		"unignore",
+		"trade",
+		"whois",
+		"hideout"
+	};
+	if (target.isEmpty()) return;
+	SendChatMessage(Local, "/" + actionList.at(action) + " " + target);
+}
+
 PLogMessage::PLogMessage(QObject *parent):
 QObject(parent)
 {

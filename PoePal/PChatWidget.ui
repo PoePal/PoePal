@@ -38,6 +38,9 @@
     </property>
     <item>
      <widget class="QPlainTextEdit" name="_DisplayEdit">
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
       <property name="undoRedoEnabled">
        <bool>false</bool>
       </property>
