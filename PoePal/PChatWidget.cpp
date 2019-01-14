@@ -460,6 +460,7 @@ void PChatWidget::Initialize()
 	_WhisperAction = _ContextMenu->addAction(tr("Whisper"));
 	_ContextMenu->addSeparator();
 	_CopyAction = _ContextMenu->addAction(tr("Copy Text"));
+	_CopyAction->setEnabled(!ui._DisplayEdit->textCursor().selectedText().isEmpty());
 	connect(_ContextMenu, &QMenu::triggered, this, &PChatWidget::OnContextMenuTriggered);
 	connect(ui._DisplayEdit, &QPlainTextEdit::copyAvailable, _CopyAction, &QAction::setEnabled);
 	connect(_CopyAction, &QAction::triggered, ui._DisplayEdit, &QPlainTextEdit::copy);
