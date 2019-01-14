@@ -252,13 +252,19 @@ void PChatWidget::OnNewMessage(PLogMessage *message)
 	if (!CheckMessage(message)) return;
 	if (ui._DisplayEdit->isVisible())
 	{
+		auto wasAtEnd = ui._DisplayEdit->verticalScrollBar()->value() >= 
+			ui._DisplayEdit->verticalScrollBar()->maximum()-2;
 		auto doc = ui._DisplayEdit->document();
 		QTextCursor cursor(doc);
 		cursor.movePosition(QTextCursor::End);
 		if(!doc->isEmpty()) cursor.insertBlock();
 		cursor.block().setUserData(new PTextBlockMessageData(message));
 		cursor.insertHtml(FormatMessage(message));
-		ui._DisplayEdit->ensureCursorVisible();
+		if (ui._DisplayEdit->textCursor().selectedText().isEmpty() && wasAtEnd)
+		{
+			ui._DisplayEdit->setTextCursor(cursor);
+			ui._DisplayEdit->ensureCursorVisible();
+		}
 	}
 	else
 	{
