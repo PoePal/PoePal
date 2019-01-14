@@ -133,6 +133,7 @@ if not exist $(OutDir)ssleay32.dll powershell -Command "Start-Process cmd -Argum
     <ClCompile Include="PChatWidgetsDlg.cpp" />
     <ClCompile Include="PChatWidgetsWidget.cpp" />
     <ClCompile Include="PJSConsoleWidget.cpp" />
+    <ClCompile Include="PLogFilterModel.cpp" />
     <ClCompile Include="PLogMessage.cpp" />
     <ClCompile Include="PLogMessageModel.cpp" />
     <ClCompile Include="PLogScanner.cpp" />
@@ -205,6 +206,12 @@ if not exist $(OutDir)ssleay32.dll powershell -Command "Start-Process cmd -Argum
       <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_NETWORK_LIB;QT_WIDGETS_LIB;QT_SQL_LIB;QT_QML_LIB</Define>
     </QtMoc>
     <QtMoc Include="PLogMessageModel.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_NETWORK_LIB;QT_WIDGETS_LIB;QT_SQL_LIB;QT_QML_LIB;QT_WEBENGINEWIDGETS_LIB;QT_WEBENGINECORE_LIB;QT_WEBCHANNEL_LIB</Define>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_NETWORK_LIB;QT_WIDGETS_LIB;QT_SQL_LIB;QT_QML_LIB;QT_WEBENGINEWIDGETS_LIB;QT_WEBENGINECORE_LIB;QT_WEBCHANNEL_LIB</Define>
+    </QtMoc>
+    <QtMoc Include="PLogFilterModel.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
       <Define Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_NETWORK_LIB;QT_WIDGETS_LIB;QT_SQL_LIB;QT_QML_LIB;QT_WEBENGINEWIDGETS_LIB;QT_WEBENGINECORE_LIB;QT_WEBCHANNEL_LIB</Define>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>

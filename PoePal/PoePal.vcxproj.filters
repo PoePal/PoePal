@@ -75,6 +75,9 @@
     <ClCompile Include="PLogMessageModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PLogFilterModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PoePal.qrc">
@@ -148,6 +151,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PLogMessageModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PLogFilterModel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
