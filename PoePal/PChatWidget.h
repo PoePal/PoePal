@@ -15,7 +15,7 @@
  */
 #pragma once
 
-#include "PLogMessage.h"
+#include "PMessage.h"
 #include <QDockWidget>
 #include "ui_PChatWidget.h"
 
@@ -32,7 +32,7 @@ class PChatWidget : public QDockWidget
 	 * The default channel displayed in the widget.
 	 * If this is not InvalidChannel, the channels cannot be set on the widget.
 	 */
-	Q_PROPERTY(PLogMessage::Channel defaultchannel READ GetDefaultChannel)
+	Q_PROPERTY(PMessage::Channel defaultchannel READ GetDefaultChannel)
 
 	/**
 	 * The channels shown in the widget.
@@ -60,7 +60,7 @@ public:
 	 * @param[in] parent
 	 *   The parent of the widget.
 	 */
-	PChatWidget(PLogMessage::Channel defaultChannel, QWidget *parent = Q_NULLPTR);
+	PChatWidget(PMessage::Channel defaultChannel, QWidget *parent = Q_NULLPTR);
 
 	/**
 	 * Destructor.
@@ -72,21 +72,21 @@ public:
 	 * @return
 	 *   The default channel to show in the widget.
 	 */
-	PLogMessage::Channel GetDefaultChannel() const;
+	PMessage::Channel GetDefaultChannel() const;
 
 	/**
 	 * Retrieves the list of channels shown in the widget.
 	 * @return
 	 *   The list of channels shown in the widget.
 	 */
-	PLogMessage::Channels GetChannels() const;
+	PMessage::Channels GetChannels() const;
 
 	/**
 	 * Sets the list of channels shown in the widget.
 	 * @param[in] channels
 	 *   The new list of channels.
 	 */
-	void SetChannels(const PLogMessage::Channels &channels);
+	void SetChannels(const PMessage::Channels &channels);
 
 	/**
 	 * Retrieves the entry widget.
@@ -148,7 +148,7 @@ private slots:
 	 * @param[in] message
 	 *   The new message.
 	 */
-	void OnNewMessage(PLogMessage *message);
+	void OnNewMessage(PMessage *message);
 
 	/**
 	 * Slot called when the contents of the entry edit change.
@@ -195,7 +195,7 @@ private:
 	 * @return
 	 *   true if the message matches the filter, false otherwise.
 	 */
-	virtual bool CheckMessage(PLogMessage *message);
+	virtual bool CheckMessage(PMessage *message);
 	
 	/**
 	 * Prepends 100 messages to the display.
@@ -209,7 +209,7 @@ private:
 	 * @return
 	 *   The formatted message.
 	 */
-	QString FormatMessage(PLogMessage *message) const;
+	QString FormatMessage(PMessage *message) const;
 
 	/**
 	 * Initializes the widget.
@@ -226,14 +226,14 @@ private:
 	 * @return
 	 *   The current selected channel.
 	 */
-	PLogMessage::Channel GetCurrentChannel() const;
+	PMessage::Channel GetCurrentChannel() const;
 
 	/**
 	 * Sets the current channel.
 	 * @param[in] channel
 	 *   The current channel.
 	 */
-	void SetCurrentChannel(PLogMessage::Channel channel);
+	void SetCurrentChannel(PMessage::Channel channel);
 
 	/**
 	 * Retrieves the prefix for the current channel.
@@ -258,12 +258,12 @@ private:
 	/**
 	 * The default channel displayed in the widget.
 	 */
-	PLogMessage::Channel _DefaultChannel = PLogMessage::InvalidChannel;
+	PMessage::Channel _DefaultChannel = PMessage::InvalidChannel;
 
 	/**
 	 * The chat channel displayed in the widget.
 	 */
-	PLogMessage::Channels _Channels;
+	PMessage::Channels _Channels;
 
 	/**
 	 * The index of the top message displayed in the widget.

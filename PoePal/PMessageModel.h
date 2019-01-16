@@ -17,14 +17,14 @@
 
 #include <QAbstractItemModel>
 
-class PLogMessage;
+class PMessage;
 
 /**
  * An item model that contains all of the log messages that have been parsed by PoePal.
  * This is great for displaying the messages in various UI elements with easy updating. There really should
  * only be a single instance of this class in the application, see PApplication.
  */
-class PLogMessageModel : public QAbstractItemModel
+class PMessageModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
@@ -35,12 +35,12 @@ public:
 	 * @param[in] parent
 	 *   The parent of the model.
 	 */
-	PLogMessageModel(QObject *parent);
+	PMessageModel(QObject *parent);
 
 	/**
 	 * Destructor.
 	 */
-	virtual ~PLogMessageModel();
+	virtual ~PMessageModel();
 
 	/**
 	 * Overrides QAbstractItemModel#index
@@ -74,7 +74,7 @@ public:
 	 * @return
 	 *   The message corresponding to the index or null if the index was invalid.
 	 */
-	PLogMessage * GetLogMessage(const QModelIndex &index) const;
+	PMessage * GetLogMessage(const QModelIndex &index) const;
 
 private slots:
 
@@ -83,5 +83,5 @@ private slots:
 	 * @param[in] msg
 	 *   The new message.
 	 */
-	void OnNewMessage(PLogMessage *msg);
+	void OnNewMessage(PMessage *msg);
 };

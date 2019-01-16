@@ -18,7 +18,7 @@
 #include <QDockWidget>
 #include "ui_PLogWidget.h"
 
-class PLogMessage;
+class PMessage;
 
 /**
  * Displays log messages in a dock widget.

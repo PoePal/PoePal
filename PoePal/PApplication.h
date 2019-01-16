@@ -20,8 +20,8 @@
 #include <QPointer>
 
 class PChatSettings;
-class PLogMessageModel;
-class PLogScanner;
+class PMessageModel;
+class PMessageHandler;
 class PMainWindow;
 class QJSEngine;
 class QNetworkAccessManager;
@@ -34,14 +34,14 @@ class PApplication : public QApplication
 	Q_OBJECT
 
 	/**
-	 * The log scanner belonging to the application.
+	 * The message handler belonging to the application.
 	 */
-	Q_PROPERTY(PLogScanner *logScanner READ GetLogScanner)
+	Q_PROPERTY(PMessageHandler *messageHandler READ GetMessageHandler)
 
 	/**
-	 * The log message model belonging to the application.
+	 * The message model belonging to the application.
 	 */
-	Q_PROPERTY(PLogMessageModel *logMessageModel READ GetLogMessageModel);
+	Q_PROPERTY(PMessageModel *messageModel READ GetMessageModel);
 
 	/**
 	 * The main window of the application.
@@ -70,18 +70,18 @@ public:
 	void Init();
 
 	/**
-	 * Retrieves the log scanner.
+	 * Retrieves the message handler.
 	 * @return
-	 *   The log scanner.
+	 *   The message handler.
 	 */
-	PLogScanner * GetLogScanner() const;
+	PMessageHandler * GetMessageHandler() const;
 
 	/**
-	 * Retrieves the log message model.
+	 * Retrieves the message model.
 	 * @return
-	 *   The log message model.
+	 *   The message model.
 	 */
-	PLogMessageModel * GetLogMessageModel() const;
+	PMessageModel * GetMessageModel() const;
 
 	/**
 	 * Retrieves the JS engine.
@@ -123,14 +123,14 @@ signals:
 private:
 
 	/**
-	 * The log scanner.
+	 * The message handler.
 	 */
-	PLogScanner *_LogScanner = nullptr;
+	PMessageHandler *_MessageHandler = nullptr;
 
 	/**
-	 * The log message model.
+	 * The message model.
 	 */
-	PLogMessageModel *_LogModel = nullptr;
+	PMessageModel *_MessageModel = nullptr;
 
 	/**
 	 * The JS engine for the application.

@@ -39,13 +39,7 @@
     <ClCompile Include="PApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PLogScanner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PLogWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PLogMessage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PChatWidget.cpp">
@@ -72,10 +66,16 @@
     <ClCompile Include="PApplicationUpdateWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PLogMessageModel.cpp">
+    <ClCompile Include="PMessageHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PLogFilterModel.cpp">
+    <ClCompile Include="PMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PMessageModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PMessageFilterModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,13 +117,7 @@
     <QtMoc Include="PMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="PLogScanner.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="PLogWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PLogMessage.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PChatWidget.h">
@@ -150,10 +144,16 @@
     <QtMoc Include="PApplicationUpdateWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="PLogMessageModel.h">
+    <QtMoc Include="PMessageHandler.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="PLogFilterModel.h">
+    <QtMoc Include="PMessage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PMessageModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PMessageFilterModel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

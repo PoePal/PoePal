@@ -16,12 +16,12 @@
 #pragma once
 
 #include <QSortFilterProxyModel>
-#include "PLogMessage.h"
+#include "PMessage.h"
 
 /**
  * Item model that filters another model based on the channel and sender.
  */
-class PLogFilterModel : public QSortFilterProxyModel
+class PMessageFilterModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 
@@ -42,26 +42,26 @@ public:
 	 * @param[in] parent
 	 *   The parent of the model.
 	 */
-	PLogFilterModel(QObject *parent);
+	PMessageFilterModel(QObject *parent);
 
 	/**
 	 * Destructor.
 	 */
-	virtual ~PLogFilterModel();
+	virtual ~PMessageFilterModel();
 
 	/**
 	 * Retrieves the list of channels included in the model.
 	 * @param[in] channels
 	 *   The list of channels included in the model.
 	 */
-	PLogMessage::Channels GetChannels() const;
+	PMessage::Channels GetChannels() const;
 
 	/**
 	 * Sets the list of channels included in the model.
 	 * @param[in] channels
 	 *   The new list of channels to be included in the model.
 	 */
-	void SetChannels(const PLogMessage::Channels &channels);
+	void SetChannels(const PMessage::Channels &channels);
 
 	/**
 	 * Retrieves the list of subjects included in the model.
@@ -84,7 +84,7 @@ public:
 	 * @return
 	 *   The corresponding message.
 	 */
-	PLogMessage * GetMessage(const QModelIndex &index) const;
+	PMessage * GetMessage(const QModelIndex &index) const;
 
 signals:
 
@@ -122,7 +122,7 @@ private:
 	 * The list of channels to be allowed.
 	 * If this is empty, they're all allowed.
 	 */
-	PLogMessage::Channels _Channels = 0xFF;
+	PMessage::Channels _Channels = 0xFF;
 
 	/**
 	 * The list of subjects that are allowed.

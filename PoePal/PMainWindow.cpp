@@ -20,6 +20,7 @@
 #include "PChatWidgetsDlg.h"
 #include "PJSConsoleWidget.h"
 #include "PLogWidget.h"
+#include "PMessageHandler.h"
 #include <QJsonDocument>
 #include <QMenu>
 #include <QMessageBox>
@@ -41,12 +42,12 @@ PMainWindow::PMainWindow(QWidget *parent)
 	QSettings settings;
 	settings.beginGroup(QStringLiteral("Chat"));
 	settings.beginGroup(QStringLiteral("DefaultWidgets"));
-	InitializeDefaultChatWidget(PLogMessage::Global, ui._GlobalAction, settings);
-	InitializeDefaultChatWidget(PLogMessage::Trade, ui._TradeAction, settings);
-	InitializeDefaultChatWidget(PLogMessage::Guild, ui._GuildAction, settings);
-	InitializeDefaultChatWidget(PLogMessage::Party, ui._PartyAction, settings);
-	InitializeDefaultChatWidget(PLogMessage::Local, ui._LocalAction, settings);
-	InitializeDefaultChatWidget(PLogMessage::Whisper, ui._WhisperAction, settings);
+	InitializeDefaultChatWidget(PMessage::Global, ui._GlobalAction, settings);
+	InitializeDefaultChatWidget(PMessage::Trade, ui._TradeAction, settings);
+	InitializeDefaultChatWidget(PMessage::Guild, ui._GuildAction, settings);
+	InitializeDefaultChatWidget(PMessage::Party, ui._PartyAction, settings);
+	InitializeDefaultChatWidget(PMessage::Local, ui._LocalAction, settings);
+	InitializeDefaultChatWidget(PMessage::Whisper, ui._WhisperAction, settings);
 	settings.endGroup(); // DefaultWidgets
 	// Restore the custom chat widgets.
 	_ChatDropDown = new QToolButton(ui._ChatToolbar);
@@ -66,14 +67,16 @@ PMainWindow::PMainWindow(QWidget *parent)
 	settings.endGroup(); // CustomWidgets
 	settings.endGroup(); // Chat
 
+	ui._HideoutAction->setProperty("action", QVariant::fromValue(PMessageHandler::Hideout));
+	ui._MenagerieAction->setProperty("action", QVariant::fromValue(PMessageHandler::Menagerie));
+	ui._RemainingAction->setProperty("action", QVariant::fromValue(PMessageHandler::Remaining));
+	ui._PassivesAction->setProperty("action", QVariant::fromValue(PMessageHandler::Passives));
 
+	connect(ui._HideoutAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(ui._MenagerieAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(ui._RemainingAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 
-	connect(ui._HideoutAction, &QAction::triggered, this, []() {
-		PLogMessage::SendChatMessage(PLogMessage::Local, "/hideout");
-	});
-	connect(ui._MenagerieAction, &QAction::triggered, this, []() {
-		PLogMessage::SendChatMessage(PLogMessage::Local, "/menagerie");
-	});
 	connect(_ChatDropDown, &QToolButton::clicked, this, &PMainWindow::ConfigureCustomChatWidgets);
 	connect(ui._UpdateAction, &QAction::triggered, this, &PMainWindow::CheckForUpdates);
 
@@ -109,7 +112,7 @@ PChatWidget * PMainWindow::CreateCustomChatWidget()
 	return widget;
 }
 
-PChatWidget * PMainWindow::GetDefaultChatWidget(PLogMessage::Channel channel) const
+PChatWidget * PMainWindow::GetDefaultChatWidget(PMessage::Channel channel) const
 {
 	return _DefaultChatWidgets.value(channel, nullptr);
 }
@@ -145,7 +148,7 @@ void PMainWindow::CheckForUpdates()
 
 void PMainWindow::Whisper(const QString &player)
 {
-	auto widget = _DefaultChatWidgets.value(PLogMessage::Whisper, nullptr);
+	auto widget = _DefaultChatWidgets.value(PMessage::Whisper, nullptr);
 	if (widget)
 	{
 		ui._WhisperAction->setChecked(true);
@@ -161,7 +164,7 @@ void PMainWindow::closeEvent(QCloseEvent *evt)
 	settings.beginGroup(QStringLiteral("DefaultWidgets"));
 	for (const auto &chatWidget : _DefaultChatWidgets.values())
 	{
-		settings.beginGroup(PLogMessage::GetStringFromChannel(chatWidget->GetDefaultChannel()));
+		settings.beginGroup(PMessage::GetStringFromChannel(chatWidget->GetDefaultChannel()));
 		chatWidget->SaveState(settings);
 		settings.endGroup();
 	}
@@ -222,6 +225,17 @@ void PMainWindow::OnUpdateRequestFinished()
 	}
 }
 
+void PMainWindow::OnMacroTriggered()
+{
+	auto action = qobject_cast<QAction *>(sender());
+	Q_ASSERT(action);
+	auto app = qobject_cast<PApplication *>(qApp);
+	Q_ASSERT(app);
+	auto handler = app->GetMessageHandler();
+	Q_ASSERT(handler);
+	handler->SendAction(action->property("action").value<PMessageHandler::Action>());
+}
+
 QQmlListProperty<PChatWidget> PMainWindow::GetCustomChatWidgetsProperty() const
 {
 	static QQmlListProperty<PChatWidget>::CountFunction countFunc = 
@@ -249,13 +263,13 @@ void PMainWindow::InitializeDockWidget(QDockWidget *widget, Qt::DockWidgetArea d
 	widget->setProperty("associatedAction", QVariant::fromValue(action));
 }
 
-void PMainWindow::InitializeDefaultChatWidget(PLogMessage::Channel channel, QAction *action,
+void PMainWindow::InitializeDefaultChatWidget(PMessage::Channel channel, QAction *action,
 	QSettings &settings)
 {
 	auto widget = new PChatWidget(channel, this);
 	_DefaultChatWidgets.insert(channel, widget);
 	InitializeDockWidget(widget, Qt::LeftDockWidgetArea, action);
-	settings.beginGroup(PLogMessage::GetStringFromChannel(channel));
+	settings.beginGroup(PMessage::GetStringFromChannel(channel));
 	widget->LoadState(settings);
 	settings.endGroup();
 }

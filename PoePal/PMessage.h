@@ -23,7 +23,7 @@
  * Messages are interpreted to be of the form:
  *   <date> <time> <id> <code> <category/client> <contents>
  */
-class PLogMessage : public QObject
+class PMessage : public QObject
 {
 	Q_OBJECT
 
@@ -127,44 +127,6 @@ public:
 	Q_DECLARE_FLAGS(Channels, Channel)
 
 	/**
-	 * Types of actions to perform on players.
-	 * @param Invite
-	 *   Invites the player to a party.
-	 * @param Kick
-	 *   Kicks the player from the current party.
-	 * @param Friend
-	 *   Adds the player as a friend.
-	 * @param Unfriend
-	 *   Removes the player as a friend.
-	 * @param Accept
-	 *   Accepts a friend request from the player.
-	 * @param Ignore
-	 *   Ignores the player.
-	 * @param Unignore
-	 *   Removes the player from the ignore list.
-	 * @param OpenTrade
-	 *   Requests to trade with the player.
-	 * @param Whois
-	 *   Performs a whois request for the player.
-	 * @param Hideout
-	 *   Goes to the hideout of the player.
-	 */
-	enum PlayerAction
-	{
-		Invite,
-		Kick,
-		Friend,
-		Unfriend,
-		Accept,
-		Ignore,
-		Unignore,
-		OpenTrade,
-		Whois,
-		Hideout
-	};
-	Q_ENUM(PlayerAction)
-
-	/**
 	 * Retrieves the channel character from the channel.
 	 * @param[in] channel
 	 *   The channel for which to retrieve the character.
@@ -225,39 +187,19 @@ public:
 	 * @return
 	 *   The log message or null if the string was an invalid format.
 	 */
-	static PLogMessage * FromString(const QString &string, QObject *parent);
-
-	/**
-	 * Sends a chat message to PoE if it is open.
-	 * @param[in] channel
-	 *   The channel to which to send the message.
-	 * @param[in] message
-	 *   The message to send.
-	 * @param[in] target
-	 *   The player to send the message to, if it is a whisper.
-	 */
-	static void SendChatMessage(Channel channel, const QString &message, const QString &target = QString());
-
-	/**
-	 * Executes an action for the given target player.
-	 * @param[in] target
-	 *   The target player for which to execute the action.
-	 * @param[in] action
-	 *   The action to perform for the player.
-	 */
-	static void SendPlayerAction(const QString &target, PlayerAction action);
+	static PMessage * FromString(const QString &string, QObject *parent);
 
 	/**
 	 * Creates a new log message.
 	 * @param[in] parent
 	 *   The parent of the new log message.
 	 */
-	PLogMessage(QObject *parent = nullptr);
+	PMessage(QObject *parent = nullptr);
 
 	/**
 	 * Destructor.
 	 */
-	virtual ~PLogMessage();
+	virtual ~PMessage();
 
 	/**
 	 * Retrieves the time of the message.
@@ -411,5 +353,5 @@ private:
 	 */
 	bool _IsIncoming = true;
 };
-Q_DECLARE_METATYPE(PLogMessage::Channels)
-Q_DECLARE_OPERATORS_FOR_FLAGS(PLogMessage::Channels)
+Q_DECLARE_METATYPE(PMessage::Channels)
+Q_DECLARE_OPERATORS_FOR_FLAGS(PMessage::Channels)

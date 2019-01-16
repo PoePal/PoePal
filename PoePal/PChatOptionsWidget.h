@@ -17,7 +17,7 @@
 
 #include <QWidget>
 #include "ui_PChatOptionsWidget.h"
-#include "PLogMessage.h"
+#include "PMessage.h"
 
 class PChatWidget;
 
@@ -73,8 +73,8 @@ private:
 	 * @param[in] singleChannel
 	 *   The single channel being displayed.
 	 */
-	void SetChannelViewMode(PLogMessage::Channel channel, QCheckBox *check, 
-		PLogMessage::Channel singleChannel);
+	void SetChannelViewMode(PMessage::Channel channel, QCheckBox *check, 
+		PMessage::Channel singleChannel);
 
 	/**
 	 * The chat widget being configured.

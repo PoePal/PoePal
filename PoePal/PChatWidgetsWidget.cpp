@@ -26,12 +26,12 @@ PChatWidgetsWidget::PChatWidgetsWidget(QWidget *parent)
 	ui.setupUi(this);
 	ui._WidgetCombo->clear();
 	// Load the default widgets into the dropdown.
-	AddDefaultChatWidget(PLogMessage::Global);
-	AddDefaultChatWidget(PLogMessage::Trade);
-	AddDefaultChatWidget(PLogMessage::Guild);
-	AddDefaultChatWidget(PLogMessage::Party);
-	AddDefaultChatWidget(PLogMessage::Local);
-	AddDefaultChatWidget(PLogMessage::Whisper);
+	AddDefaultChatWidget(PMessage::Global);
+	AddDefaultChatWidget(PMessage::Trade);
+	AddDefaultChatWidget(PMessage::Guild);
+	AddDefaultChatWidget(PMessage::Party);
+	AddDefaultChatWidget(PMessage::Local);
+	AddDefaultChatWidget(PMessage::Whisper);
 	// Load the custom widgets into the dropdown.
 	AddChatWidget(nullptr);
 	auto app = qobject_cast<PApplication *>(qApp);
@@ -67,7 +67,7 @@ void PChatWidgetsWidget::OnChatWidgetChanged()
 	int idx = ui._WidgetCombo->currentIndex();
 	if (idx < 0) return;
 	auto widget = ui._WidgetCombo->currentData().value<PChatWidget *>();
-	ui._DeleteWidgetBtn->setEnabled(widget && widget->GetDefaultChannel() == PLogMessage::InvalidChannel);
+	ui._DeleteWidgetBtn->setEnabled(widget && widget->GetDefaultChannel() == PMessage::InvalidChannel);
 	UpdateWidgetsCombo();
 }
 
@@ -106,7 +106,7 @@ void PChatWidgetsWidget::UpdateWidgetsCombo()
 	}
 }
 
-void PChatWidgetsWidget::AddDefaultChatWidget(PLogMessage::Channel channel)
+void PChatWidgetsWidget::AddDefaultChatWidget(PMessage::Channel channel)
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);

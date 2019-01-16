@@ -19,13 +19,13 @@
 #include <QQmlEngine>
 #include "PApplicationUpdate.h"
 #include "PChatWidget.h"
-#include "PLogMessage.h"
-#include "PLogMessageModel.h"
-#include "PLogScanner.h"
+#include "PMessage.h"
+#include "PMessageModel.h"
+#include "PMessageHandler.h"
 #include "PMainWindow.h"
 #include "windows.h"
 
-QJSValue ChannelsToValue(PLogMessage::Channels channels)
+QJSValue ChannelsToValue(PMessage::Channels channels)
 {
 	return QJSValue(static_cast<int>(channels));
 }
@@ -124,30 +124,30 @@ void PApplication::Init()
 		_JSEngine = new QQmlEngine(this);
 		_JSEngine->globalObject().setProperty("application", _JSEngine->newQObject(this));
 	}
-	if (!_LogScanner)_LogScanner = new PLogScanner(this);
-	if (!_LogModel) _LogModel = new PLogMessageModel(this); // This must happen after _LogScanner
+	if (!_MessageHandler)_MessageHandler = new PMessageHandler(this);
+	if (!_MessageModel) _MessageModel = new PMessageModel(this); // This must happen after _LogScanner
 	if (!_MainWindow)
 	{
 		_MainWindow = new PMainWindow();
 		_MainWindow->show();
 	}
-	qRegisterMetaType<PLogMessage::Channel>("PLogMessage::Channel");
-	qRegisterMetaType<PLogMessage::Channels>("PLogMessage::Channels");
-	QMetaType::registerConverter<PLogMessage::Channel, QJSValue>(ChannelsToValue);
+	qRegisterMetaType<PMessage::Channel>("PLogMessage::Channel");
+	qRegisterMetaType<PMessage::Channels>("PLogMessage::Channels");
+	QMetaType::registerConverter<PMessage::Channel, QJSValue>(ChannelsToValue);
 	P_REGISTER_JS_OBJECT(PChatWidget);
-	P_REGISTER_JS_OBJECT(PLogScanner);
-	P_REGISTER_JS_OBJECT(PLogMessage);
+	P_REGISTER_JS_OBJECT(PMessageHandler);
+	P_REGISTER_JS_OBJECT(PMessage);
 	P_REGISTER_JS_OBJECT(PMainWindow);
 }
 
-PLogScanner * PApplication::GetLogScanner() const
+PMessageHandler * PApplication::GetMessageHandler() const
 {
-	return _LogScanner;
+	return _MessageHandler;
 }
 
-PLogMessageModel * PApplication::GetLogMessageModel() const
+PMessageModel * PApplication::GetMessageModel() const
 {
-	return _LogModel;
+	return _MessageModel;
 }
 
 QJSEngine * PApplication::GetJSEngine() const

@@ -17,7 +17,7 @@
 
 #include <QWidget>
 #include "ui_PChatWidgetsWidget.h"
-#include "PLogMessage.h"
+#include "PMessage.h"
 
 class PChatWidget;
 
@@ -76,7 +76,7 @@ private:
 	 * @param[in] channel
 	 *   The channel for which to add the default chat window.
 	 */
-	void AddDefaultChatWidget(PLogMessage::Channel channel);
+	void AddDefaultChatWidget(PMessage::Channel channel);
 
 	/**
 	 * Adds a chat window.

@@ -72,6 +72,9 @@
    <property name="windowTitle">
     <string>Macro Toolbar</string>
    </property>
+   <property name="command" stdset="0">
+    <string>ladder</string>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -80,8 +83,10 @@
    </attribute>
    <addaction name="_HideoutAction"/>
    <addaction name="_MenagerieAction"/>
+   <addaction name="_RemainingAction"/>
+   <addaction name="_PassivesAction"/>
   </widget>
-  <widget class="QToolBar" name="_DebugToolbar">
+  <widget class="QToolBar" name="_SystemToolbar">
    <property name="windowTitle">
     <string>Debug Toolbar</string>
    </property>
@@ -175,14 +180,20 @@
    <property name="text">
     <string>Hideout</string>
    </property>
+   <property name="command" stdset="0">
+    <string>hideout</string>
+   </property>
   </action>
   <action name="_MenagerieAction">
    <property name="icon">
     <iconset resource="PoePal.qrc">
-     <normaloff>:/PoePal/Resources/32x32/bug.png</normaloff>:/PoePal/Resources/32x32/bug.png</iconset>
+     <normaloff>:/PoePal/Resources/32x32/chameleon.png</normaloff>:/PoePal/Resources/32x32/chameleon.png</iconset>
    </property>
    <property name="text">
     <string>Menagerie</string>
+   </property>
+   <property name="command" stdset="0">
+    <string>menagerie</string>
    </property>
   </action>
   <action name="_WhisperAction">
@@ -216,6 +227,138 @@
    </property>
    <property name="text">
     <string>Check for Update</string>
+   </property>
+  </action>
+  <action name="_PassivesAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/to_do_list_checked_all.png</normaloff>:/PoePal/Resources/32x32/to_do_list_checked_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Check Passives</string>
+   </property>
+   <property name="toolTip">
+    <string>Check Passives</string>
+   </property>
+  </action>
+  <action name="_BugAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/bug.png</normaloff>:/PoePal/Resources/32x32/bug.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bug</string>
+   </property>
+   <property name="toolTip">
+    <string>Report a Bug</string>
+   </property>
+  </action>
+  <action name="_LadderAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/text_list_numbers.png</normaloff>:/PoePal/Resources/32x32/text_list_numbers.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ladder</string>
+   </property>
+   <property name="toolTip">
+    <string>Ladder</string>
+   </property>
+  </action>
+  <action name="_PlayedAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/stopwatch_start.png</normaloff>:/PoePal/Resources/32x32/stopwatch_start.png</iconset>
+   </property>
+   <property name="text">
+    <string>Played</string>
+   </property>
+   <property name="toolTip">
+    <string>Played</string>
+   </property>
+  </action>
+  <action name="_AgeAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/date.png</normaloff>:/PoePal/Resources/32x32/date.png</iconset>
+   </property>
+   <property name="text">
+    <string>Age</string>
+   </property>
+   <property name="toolTip">
+    <string>Age</string>
+   </property>
+  </action>
+  <action name="_DeathsAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/user_death.png</normaloff>:/PoePal/Resources/32x32/user_death.png</iconset>
+   </property>
+   <property name="text">
+    <string>Deaths</string>
+   </property>
+   <property name="toolTip">
+    <string>Deaths</string>
+   </property>
+  </action>
+  <action name="_RemainingAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/counter.png</normaloff>:/PoePal/Resources/32x32/counter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remaining</string>
+   </property>
+   <property name="toolTip">
+    <string>Remaining Monsters</string>
+   </property>
+  </action>
+  <action name="_PvPAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/sword.png</normaloff>:/PoePal/Resources/32x32/sword.png</iconset>
+   </property>
+   <property name="text">
+    <string>PvP</string>
+   </property>
+   <property name="toolTip">
+    <string>PvP Stats</string>
+   </property>
+  </action>
+  <action name="_OOSAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/arrow_refresh.png</normaloff>:/PoePal/Resources/32x32/arrow_refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Out Of Sync</string>
+   </property>
+   <property name="toolTip">
+    <string>Out of Sync</string>
+   </property>
+  </action>
+  <action name="_DanceAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/stickman.png</normaloff>:/PoePal/Resources/32x32/stickman.png</iconset>
+   </property>
+   <property name="text">
+    <string>Dance</string>
+   </property>
+   <property name="toolTip">
+    <string>Dance</string>
+   </property>
+  </action>
+  <action name="_StatusAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/vcard.png</normaloff>:/PoePal/Resources/32x32/vcard.png</iconset>
+   </property>
+   <property name="text">
+    <string>Status</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Status</string>
    </property>
   </action>
  </widget>

@@ -18,7 +18,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_PMainWindow.h"
 #include <QQmlListProperty>
-#include "PLogMessage.h"
+#include "PMessage.h"
 
 class PChatWidget;
 class PJSConsoleWidget;
@@ -76,7 +76,7 @@ public:
 	 * @return
 	 *   The default chat widget for the channel.
 	 */
-	Q_INVOKABLE PChatWidget * GetDefaultChatWidget(PLogMessage::Channel channel) const;
+	Q_INVOKABLE PChatWidget * GetDefaultChatWidget(PMessage::Channel channel) const;
 
 	/**
 	 * Removes the given custom chat widget.
@@ -124,6 +124,11 @@ private slots:
 	 */
 	void OnUpdateRequestFinished();
 
+	/**
+	 * Slot called when one of the macro buttons is pressed.
+	 */
+	void OnMacroTriggered();
+
 private:
 	Ui::PMainWindow ui;
 
@@ -154,7 +159,7 @@ private:
 	 * @param[in] settings
 	 *   The settings from which to load the widget state.
 	 */
-	void InitializeDefaultChatWidget(PLogMessage::Channel channel, QAction *action, QSettings &settings);
+	void InitializeDefaultChatWidget(PMessage::Channel channel, QAction *action, QSettings &settings);
 
 	/**
 	 * Initializes a custom chat widget.
@@ -180,7 +185,7 @@ private:
 	/**
 	 * The default channels.
 	 */
-	QHash<PLogMessage::Channel, PChatWidget *> _DefaultChatWidgets;
+	QHash<PMessage::Channel, PChatWidget *> _DefaultChatWidgets;
 
 	/**
 	 * The list of custom chat widgets.

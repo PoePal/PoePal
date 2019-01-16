@@ -15,7 +15,7 @@
  */
 #include "PLogWidget.h"
 #include "PApplication.h"
-#include "PLogMessageModel.h"
+#include "PMessageModel.h"
 #include <QScrollBar>
 
 PLogWidget::PLogWidget(QWidget *parent)
@@ -23,7 +23,7 @@ PLogWidget::PLogWidget(QWidget *parent)
 {
 	ui.setupUi(this);
 	auto app = qobject_cast<PApplication *>(qApp);
-	ui._ListView->setModel(app->GetLogMessageModel());
+	ui._ListView->setModel(app->GetMessageModel());
 }
 
 PLogWidget::~PLogWidget()

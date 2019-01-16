@@ -16,7 +16,7 @@
 #include "PChatWidget.h"
 #include "PApplication.h"
 #include "PChatOptionsDlg.h"
-#include "PLogScanner.h"
+#include "PMessageHandler.h"
 #include "PMainWindow.h"
 #include <QKeyEvent>
 #include <QMenu>
@@ -40,7 +40,7 @@ public:
 	 * @param[in] message
 	 *   The message to which the text block will point.
 	 */
-	PTextBlockMessageData(PLogMessage *message);
+	PTextBlockMessageData(PMessage *message);
 
 	/**
 	 * Destructor.
@@ -52,17 +52,17 @@ public:
 	 * @return
 	 *   The log message.
 	 */
-	PLogMessage * GetLogMessage() const;
+	PMessage * GetLogMessage() const;
 
 private:
 
 	/**
 	 * The log message being lined with a text block.
 	 */
-	QPointer<PLogMessage> _Message;
+	QPointer<PMessage> _Message;
 };
 
-PTextBlockMessageData::PTextBlockMessageData(PLogMessage *message):
+PTextBlockMessageData::PTextBlockMessageData(PMessage *message):
 _Message(message)
 {
 
@@ -73,7 +73,7 @@ PTextBlockMessageData::~PTextBlockMessageData()
 
 }
 
-PLogMessage * PTextBlockMessageData::GetLogMessage() const
+PMessage * PTextBlockMessageData::GetLogMessage() const
 {
 	return _Message.data();
 }
@@ -115,7 +115,7 @@ QDockWidget(parent)
 	Initialize();
 }
 
-PChatWidget::PChatWidget(PLogMessage::Channel defaultChannel, QWidget *parent /*= Q_NULLPTR*/):
+PChatWidget::PChatWidget(PMessage::Channel defaultChannel, QWidget *parent /*= Q_NULLPTR*/):
 QDockWidget(parent)
 {
 	_DefaultChannel = defaultChannel;
@@ -127,19 +127,19 @@ PChatWidget::~PChatWidget()
 {
 }
 
-PLogMessage::Channel PChatWidget::GetDefaultChannel() const
+PMessage::Channel PChatWidget::GetDefaultChannel() const
 {
 	return _DefaultChannel;
 }
 
-PLogMessage::Channels PChatWidget::GetChannels() const
+PMessage::Channels PChatWidget::GetChannels() const
 {
-	return static_cast<PLogMessage::Channel>(_Channels.operator int());
+	return static_cast<PMessage::Channel>(_Channels.operator int());
 }
 
-void PChatWidget::SetChannels(const PLogMessage::Channels &channels)
+void PChatWidget::SetChannels(const PMessage::Channels &channels)
 {
-	if (_DefaultChannel == PLogMessage::InvalidChannel)
+	if (_DefaultChannel == PMessage::InvalidChannel)
 	{
 		_Channels = channels;
 		UpdateForChannels();
@@ -148,7 +148,7 @@ void PChatWidget::SetChannels(const PLogMessage::Channels &channels)
 
 void PChatWidget::SetChannels(int channels)
 {
-	SetChannels(PLogMessage::Channels(static_cast<PLogMessage::Channel>(channels)));
+	SetChannels(PMessage::Channels(static_cast<PMessage::Channel>(channels)));
 }
 
 QPlainTextEdit * PChatWidget::GetEntryWidget() const
@@ -158,9 +158,9 @@ QPlainTextEdit * PChatWidget::GetEntryWidget() const
 
 void PChatWidget::LoadState(const QSettings &settings)
 {
-	if (_DefaultChannel == PLogMessage::InvalidChannel)
+	if (_DefaultChannel == PMessage::InvalidChannel)
 	{
-		_Channels = static_cast<PLogMessage::Channel>(settings.value(QStringLiteral("Channels")).toInt());
+		_Channels = static_cast<PMessage::Channel>(settings.value(QStringLiteral("Channels")).toInt());
 		setWindowTitle(settings.value(QStringLiteral("Title")).toString());
 	}
 	UpdateForChannels();
@@ -168,7 +168,7 @@ void PChatWidget::LoadState(const QSettings &settings)
 
 void PChatWidget::SaveState(QSettings &settings) const
 {
-	if (_DefaultChannel == PLogMessage::InvalidChannel)
+	if (_DefaultChannel == PMessage::InvalidChannel)
 	{
 		settings.setValue(QStringLiteral("Title"), windowTitle());
 		settings.setValue(QStringLiteral("Channels"), static_cast<int>(_Channels));
@@ -182,7 +182,7 @@ void PChatWidget::Submit()
 	ui._EntryEdit->clear();
 	SetCurrentChannel(channel);
 	// Strip off the channel prefix.
-	if (GetCurrentChannel() != PLogMessage::Local)
+	if (GetCurrentChannel() != PMessage::Local)
 	{
 		text = text.mid(1).trimmed();
 	}
@@ -190,14 +190,18 @@ void PChatWidget::Submit()
 	// If the channel is whisper, get the sender from the first word.
 	int chIdx = 0;
 	QString target;
-	if (GetCurrentChannel() == PLogMessage::Whisper)
+	if (GetCurrentChannel() == PMessage::Whisper)
 	{
 		while (chIdx < text.length() && !text[chIdx].isSpace()) ++chIdx;
 		target = text.left(chIdx);
 		text = text.mid(chIdx).trimmed();
 		if (target.isEmpty()) return;
 	}
-	PLogMessage::SendChatMessage(GetCurrentChannel(), text, target);
+	auto app = qobject_cast<PApplication *>(qApp);
+	Q_ASSERT(app);
+	auto handler = app->GetMessageHandler();
+	Q_ASSERT(handler);
+	handler->SendChatMessage(GetCurrentChannel(), text, target);
 }
 
 void PChatWidget::Configure()
@@ -207,7 +211,7 @@ void PChatWidget::Configure()
 
 void PChatWidget::Remove()
 {
-	if (_DefaultChannel != PLogMessage::InvalidChannel) return;
+	if (_DefaultChannel != PMessage::InvalidChannel) return;
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
 	app->GetMainWindow()->RemoveCustomChatWidget(this);
@@ -247,7 +251,7 @@ bool PChatWidget::eventFilter(QObject *watched, QEvent *evt)
 	return QDockWidget::eventFilter(watched, evt);
 }
 
-void PChatWidget::OnNewMessage(PLogMessage *message)
+void PChatWidget::OnNewMessage(PMessage *message)
 {
 	if (!CheckMessage(message)) return;
 	if (ui._DisplayEdit->isVisible())
@@ -315,7 +319,7 @@ void PChatWidget::OnEntryChanged()
 void PChatWidget::OnChannelSelected()
 {
 	auto action = qobject_cast<QAction *>(sender());
-	if (action) SetCurrentChannel(action->property("Channel").value<PLogMessage::Channel>());
+	if (action) SetCurrentChannel(action->property("Channel").value<PMessage::Channel>());
 }
 
 void PChatWidget::OnTabSelected()
@@ -335,7 +339,7 @@ void PChatWidget::OnTabSelected()
 	if (ui._WhisperTabs->tabText(sel) != target)
 	{
 		text.prepend(ui._WhisperTabs->tabText(sel) + ' ');
-		text.prepend(PLogMessage::GetPrefixFromChannel(PLogMessage::Whisper));
+		text.prepend(PMessage::GetPrefixFromChannel(PMessage::Whisper));
 		ui._EntryEdit->setPlainText(text);
 		auto cursor = ui._EntryEdit->textCursor();
 		cursor.movePosition(QTextCursor::End);
@@ -358,45 +362,36 @@ void PChatWidget::OnContextMenuRequested(const QPoint &pos)
 
 void PChatWidget::OnContextMenuTriggered(QAction *action)
 {
-	auto message = _ContextMenu->property("msg").value<PLogMessage *>();
+	auto message = _ContextMenu->property("msg").value<PMessage *>();
+	auto app = qobject_cast<PApplication *>(qApp);
+	Q_ASSERT(app);
+	auto handler = app->GetMessageHandler();
+	Q_ASSERT(handler);
+	auto actionVar = action->property("action");
 	if (!message) return;
-	else if (action == _FriendAction)
+	else if (!actionVar.isNull())
 	{
-		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Friend);
-	}
-	else if (action == _InviteAction)
-	{
-		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Invite);
-	}
-	else if (action == _IgnoreAction)
-	{
-		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Ignore);
-	}
-	else if (action == _WhoisAction)
-	{
-		PLogMessage::SendPlayerAction(message->GetSubject(), PLogMessage::Whois);
+		handler->SendAction(actionVar.value<PMessageHandler::Action>(), message->GetSubject());
 	}
 	else if (action == _WhisperAction)
 	{
-		auto app = qobject_cast<PApplication *>(qApp);
-		Q_ASSERT(app);
 		auto mainWin = app->GetMainWindow();
 		Q_ASSERT(mainWin);
 		mainWin->Whisper(message->GetSubject());
 	}
 }
 
-bool PChatWidget::CheckMessage(PLogMessage *message)
+bool PChatWidget::CheckMessage(PMessage *message)
 {
 	return _Channels.testFlag(message->GetChannel()) || 
-		(message->GetType() == PLogMessage::Info && message->GetSubtype() == PLogMessage::Event);
+		(message->GetType() == PMessage::Info && message->GetSubtype() == PMessage::Event);
 }
 
 void PChatWidget::PrependMessages()
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	QString contents;
 	auto messages = scanner->GetLogMessages();
 	int msgCount = messages.length();
@@ -413,25 +408,25 @@ void PChatWidget::PrependMessages()
 	ui._DisplayEdit->appendHtml(contents);
 }
 
-QString PChatWidget::FormatMessage(PLogMessage *message) const
+QString PChatWidget::FormatMessage(PMessage *message) const
 {
 	QString color = "black";
-	if (message->GetChannel() == PLogMessage::Global) color = "firebrick";
-	else if (message->GetChannel() == PLogMessage::Trade) color = "goldenrod";
-	else if (message->GetChannel() == PLogMessage::Guild) color = "gray";
-	else if (message->GetChannel() == PLogMessage::Party) color = "cyan";
-	else if (message->GetChannel() == PLogMessage::Local) color = "limegreen";
-	else if (message->GetChannel() == PLogMessage::Whisper) color = "mediumpurple";
+	if (message->GetChannel() == PMessage::Global) color = "firebrick";
+	else if (message->GetChannel() == PMessage::Trade) color = "goldenrod";
+	else if (message->GetChannel() == PMessage::Guild) color = "gray";
+	else if (message->GetChannel() == PMessage::Party) color = "cyan";
+	else if (message->GetChannel() == PMessage::Local) color = "limegreen";
+	else if (message->GetChannel() == PMessage::Whisper) color = "mediumpurple";
 	QString text;
-	if (message->GetSubtype() == PLogMessage::Chat)
+	if (message->GetSubtype() == PMessage::Chat)
 	{
 		text += "<span style=\"color: " + color + "; font-weight: bold;\">" + 
 			message->GetTime().toString("[hh:mm] ");
-		if (message->GetChannel() != PLogMessage::InvalidChannel)
+		if (message->GetChannel() != PMessage::InvalidChannel)
 		{
-			text += PLogMessage::GetPrefixFromChannel(message->GetChannel());
+			text += PMessage::GetPrefixFromChannel(message->GetChannel());
 		}
-		if (message->GetChannel() == PLogMessage::Whisper)
+		if (message->GetChannel() == PMessage::Whisper)
 		{
 			text += message->IsIncoming() ? tr("From ") : tr("To ");
 		}
@@ -444,9 +439,9 @@ void PChatWidget::Initialize()
 {
 	ui.setupUi(this);
 	auto app = qobject_cast<PApplication *>(qApp);
-	if (_DefaultChannel != PLogMessage::InvalidChannel)
+	if (_DefaultChannel != PMessage::InvalidChannel)
 	{
-		setWindowTitle(PLogMessage::GetChannelLabel(_DefaultChannel));
+		setWindowTitle(PMessage::GetChannelLabel(_DefaultChannel));
 	}
 	Q_ASSERT(app);
 	ui._WhisperTabs->tabBar()->setStyle(new PHorizontalTabStyle());
@@ -455,14 +450,18 @@ void PChatWidget::Initialize()
 	connect(ui._WhisperTabs->tabBar(), &QTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
 	ui._EntryEdit->installEventFilter(this);
 	PrependMessages();
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	ui._DisplayEdit->verticalScrollBar()->setValue(ui._DisplayEdit->verticalScrollBar()->maximum());
-	connect(scanner, &PLogScanner::NewMessage, this, &PChatWidget::OnNewMessage);
+	connect(scanner, &PMessageHandler::NewMessage, this, &PChatWidget::OnNewMessage);
 	_ContextMenu = new QMenu(this);
 	_FriendAction = _ContextMenu->addAction(tr("Add Friend"));
+	_FriendAction->setProperty("action", QVariant::fromValue(PMessageHandler::Friend));
 	_InviteAction = _ContextMenu->addAction(tr("Invite to Party"));
+	_InviteAction->setProperty("action", QVariant::fromValue(PMessageHandler::Invite));
 	_IgnoreAction = _ContextMenu->addAction(tr("Ignore"));
+	_IgnoreAction->setProperty("action", QVariant::fromValue(PMessageHandler::Ignore));
 	_WhoisAction = _ContextMenu->addAction(tr("Who Is This?"));
+	_WhoisAction->setProperty("action", QVariant::fromValue(PMessageHandler::Whois));
 	_WhisperAction = _ContextMenu->addAction(tr("Whisper"));
 	_ContextMenu->addSeparator();
 	_CopyAction = _ContextMenu->addAction(tr("Copy Text"));
@@ -482,52 +481,52 @@ void PChatWidget::UpdateForChannels()
 	}
 	_ChannelMenu->clear();
 	int channelCt = 0;
-	for (const auto &channel : PLogMessage::GetChannels())
+	for (const auto &channel : PMessage::GetChannels())
 	{
 		if (_Channels.testFlag(channel))
 		{
 			channelCt++;
-			auto action = _ChannelMenu->addAction(PLogMessage::GetChannelLabel(channel));
+			auto action = _ChannelMenu->addAction(PMessage::GetChannelLabel(channel));
 			action->setProperty("Channel", channel);
 			connect(action, &QAction::triggered, this, &PChatWidget::OnChannelSelected);
 		}
 	}
 	bool oneChannel = channelCt == 1;
 	SetChannelToFirst();
-	if (_DefaultChannel != PLogMessage::InvalidChannel) ui._ChannelBtn->hide();
+	if (_DefaultChannel != PMessage::InvalidChannel) ui._ChannelBtn->hide();
 	else ui._ChannelBtn->show();
-	bool tabbedWhisper = oneChannel && _Channels.testFlag(PLogMessage::Whisper);
+	bool tabbedWhisper = oneChannel && _Channels.testFlag(PMessage::Whisper);
 	ui._WhisperTabs->setVisible(tabbedWhisper);
 	ui._DisplayEdit->setVisible(!tabbedWhisper);
 }
 
-PLogMessage::Channel PChatWidget::GetCurrentChannel() const
+PMessage::Channel PChatWidget::GetCurrentChannel() const
 {
-	return ui._ChannelBtn->property("Channel").value<PLogMessage::Channel>();
+	return ui._ChannelBtn->property("Channel").value<PMessage::Channel>();
 }
 
-void PChatWidget::SetCurrentChannel(PLogMessage::Channel channel)
+void PChatWidget::SetCurrentChannel(PMessage::Channel channel)
 {
 	if (!_Channels.testFlag(channel))
 	{
 		SetChannelToFirst();
 		return;
 	}
-	ui._ChannelBtn->setText(PLogMessage::GetChannelLabel(channel));
+	ui._ChannelBtn->setText(PMessage::GetChannelLabel(channel));
 	ui._ChannelBtn->setProperty("Channel", channel);
 	UpdatePrefixForChannel();
 }
 
 QChar PChatWidget::GetCurrentChannelPrefix() const
 {
-	return PLogMessage::GetPrefixFromChannel(GetCurrentChannel());
+	return PMessage::GetPrefixFromChannel(GetCurrentChannel());
 }
 
 void PChatWidget::SetChannelToFirst()
 {
 	if (_ChannelMenu->actions().length() > 0)
 	{
-		SetCurrentChannel(_ChannelMenu->actions().first()->property("Channel").value<PLogMessage::Channel>());
+		SetCurrentChannel(_ChannelMenu->actions().first()->property("Channel").value<PMessage::Channel>());
 	}
 }
 
@@ -538,19 +537,19 @@ void PChatWidget::UpdatePrefixForChannel()
 	// Get the current text trimmed so that the first character indicates what channel it is currently 
 	// destined for.
 	auto text = ui._EntryEdit->toPlainText().trimmed();
-	auto prefixChannel = text.isEmpty() ? PLogMessage::Local : PLogMessage::GetChannelFromPrefix(text[0]);
-	if (prefixChannel == PLogMessage::InvalidChannel) prefixChannel = PLogMessage::Local;
+	auto prefixChannel = text.isEmpty() ? PMessage::Local : PMessage::GetChannelFromPrefix(text[0]);
+	if (prefixChannel == PMessage::InvalidChannel) prefixChannel = PMessage::Local;
 	// If the prefix channel matches the current channel, don't do anything.
 	if (prefixChannel == channel) return;
 
 	// Otherwise, strip off the previous prefix and replace with the new appropriate prefix.
-	if (prefixChannel != PLogMessage::Local) text = text.mid(1).trimmed();
+	if (prefixChannel != PMessage::Local) text = text.mid(1).trimmed();
 	// There may be a second prefix.
 	auto secondPrefix = text.isEmpty() ? 
-		PLogMessage::InvalidChannel : PLogMessage::GetChannelFromPrefix(text[0]);
-	if(secondPrefix != PLogMessage::InvalidChannel)text = text.mid(1).trimmed();
-	if (channel != PLogMessage::Local) text.insert(0, PLogMessage::GetPrefixFromChannel(channel));
-	if (channel == PLogMessage::Whisper && _DefaultChannel == PLogMessage::Whisper &&
+		PMessage::InvalidChannel : PMessage::GetChannelFromPrefix(text[0]);
+	if(secondPrefix != PMessage::InvalidChannel)text = text.mid(1).trimmed();
+	if (channel != PMessage::Local) text.insert(0, PMessage::GetPrefixFromChannel(channel));
+	if (channel == PMessage::Whisper && _DefaultChannel == PMessage::Whisper &&
 		ui._WhisperTabs->count() > 0)
 	{
 		text += ui._WhisperTabs->tabBar()->tabText(ui._WhisperTabs->tabBar()->currentIndex()) + ' ';
@@ -564,16 +563,16 @@ void PChatWidget::UpdatePrefixForChannel()
 void PChatWidget::UpdateChannelForPrefix()
 {
 	auto text = ui._EntryEdit->document()->toPlainText().trimmed();
-	if (text.isEmpty()) SetCurrentChannel(PLogMessage::Local);
+	if (text.isEmpty()) SetCurrentChannel(PMessage::Local);
 	else
 	{
 		
-		auto channel = PLogMessage::GetChannelFromPrefix(text[0]);
+		auto channel = PMessage::GetChannelFromPrefix(text[0]);
 		text = text.mid(1).trimmed();
 		auto secondChannel = text.isEmpty() ?
-			PLogMessage::InvalidChannel : PLogMessage::GetChannelFromPrefix(text[0]);
-		if (secondChannel != PLogMessage::InvalidChannel) SetCurrentChannel(secondChannel);
-		else if (channel != PLogMessage::InvalidChannel) SetCurrentChannel(channel);
-		else SetCurrentChannel(PLogMessage::Local);
+			PMessage::InvalidChannel : PMessage::GetChannelFromPrefix(text[0]);
+		if (secondChannel != PMessage::InvalidChannel) SetCurrentChannel(secondChannel);
+		else if (channel != PMessage::InvalidChannel) SetCurrentChannel(channel);
+		else SetCurrentChannel(PMessage::Local);
 	}
 }

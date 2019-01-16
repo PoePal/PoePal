@@ -13,56 +13,56 @@
  * You should have received a copy of the GNU General Public License along with PeoPal.  If not, see 
  * <https://www.gnu.org/licenses/>.
  */
-#include "PLogMessageModel.h"
+#include "PMessageModel.h"
 #include "PApplication.h"
-#include "PLogScanner.h"
+#include "PMessageHandler.h"
 
-PLogMessageModel::PLogMessageModel(QObject *parent)
+PMessageModel::PMessageModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	Q_ASSERT(scanner);
-	connect(scanner, &PLogScanner::NewMessage, this, &PLogMessageModel::OnNewMessage);
+	connect(scanner, &PMessageHandler::NewMessage, this, &PMessageModel::OnNewMessage);
 }
 
-PLogMessageModel::~PLogMessageModel()
+PMessageModel::~PMessageModel()
 {
 }
 
-QModelIndex PLogMessageModel::index(int row, int column, const QModelIndex &parent /*= QModelIndex()*/) const
+QModelIndex PMessageModel::index(int row, int column, const QModelIndex &parent /*= QModelIndex()*/) const
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	Q_ASSERT(scanner);
 	auto messages = scanner->GetLogMessages();
 	if (row >= 0 && row < messages.length()) return createIndex(row, column, messages.at(row));
 	return QModelIndex();
 }
 
-QModelIndex PLogMessageModel::parent(const QModelIndex &child) const
+QModelIndex PMessageModel::parent(const QModelIndex &child) const
 {
 	// We will never have any parents.
 	return QModelIndex();
 }
 
-int PLogMessageModel::rowCount(const QModelIndex &parent /*= QModelIndex()*/) const
+int PMessageModel::rowCount(const QModelIndex &parent /*= QModelIndex()*/) const
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	Q_ASSERT(scanner);
 	return scanner->GetLogMessages().length();
 }
 
-int PLogMessageModel::columnCount(const QModelIndex &parent /*= QModelIndex()*/) const
+int PMessageModel::columnCount(const QModelIndex &parent /*= QModelIndex()*/) const
 {
 	return 1;
 }
 
-QVariant PLogMessageModel::data(const QModelIndex &index, int role /*= Qt::DisplayRole*/) const
+QVariant PMessageModel::data(const QModelIndex &index, int role /*= Qt::DisplayRole*/) const
 {
 	if (!index.isValid() || role != Qt::DisplayRole) return QVariant();
 	auto msg = GetLogMessage(index);
@@ -70,17 +70,17 @@ QVariant PLogMessageModel::data(const QModelIndex &index, int role /*= Qt::Displ
 	return QVariant();
 }
 
-PLogMessage * PLogMessageModel::GetLogMessage(const QModelIndex &index) const
+PMessage * PMessageModel::GetLogMessage(const QModelIndex &index) const
 {
 	if (!index.isValid()) return nullptr;
-	return static_cast<PLogMessage *>(index.internalPointer());
+	return static_cast<PMessage *>(index.internalPointer());
 }
 
-void PLogMessageModel::OnNewMessage(PLogMessage *msg)
+void PMessageModel::OnNewMessage(PMessage *msg)
 {
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
-	auto scanner = app->GetLogScanner();
+	auto scanner = app->GetMessageHandler();
 	Q_ASSERT(scanner);
 	auto messages = scanner->GetLogMessages();
 	beginInsertRows(QModelIndex(), messages.length() - 1, messages.length() - 1);

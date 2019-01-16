@@ -13,56 +13,56 @@
  * You should have received a copy of the GNU General Public License along with PeoPal.  If not, see 
  * <https://www.gnu.org/licenses/>.
  */
-#include "PLogFilterModel.h"
-#include "PLogMessageModel.h"
+#include "PMessageFilterModel.h"
+#include "PMessageModel.h"
 
-PLogFilterModel::PLogFilterModel(QObject *parent)
+PMessageFilterModel::PMessageFilterModel(QObject *parent)
 	: QSortFilterProxyModel(parent)
 {
 }
 
-PLogFilterModel::~PLogFilterModel()
+PMessageFilterModel::~PMessageFilterModel()
 {
 }
 
-PLogMessage::Channels PLogFilterModel::GetChannels() const
+PMessage::Channels PMessageFilterModel::GetChannels() const
 {
 	return _Channels;
 }
 
-void PLogFilterModel::SetChannels(const PLogMessage::Channels &channels)
+void PMessageFilterModel::SetChannels(const PMessage::Channels &channels)
 {
 	_Channels = channels;
 	invalidateFilter();
 }
 
-void PLogFilterModel::SetChannels(int channels)
+void PMessageFilterModel::SetChannels(int channels)
 {
-	_Channels = static_cast<PLogMessage::Channel>(channels);
+	_Channels = static_cast<PMessage::Channel>(channels);
 	invalidateFilter();
 }
 
-QStringList PLogFilterModel::GetSubjects() const
+QStringList PMessageFilterModel::GetSubjects() const
 {
 	return _Subjects;
 }
 
-void PLogFilterModel::SetSubjects(const QStringList &subjects)
+void PMessageFilterModel::SetSubjects(const QStringList &subjects)
 {
 	_Subjects = subjects;
 	invalidateFilter();
 }
 
-PLogMessage * PLogFilterModel::GetMessage(const QModelIndex &index) const
+PMessage * PMessageFilterModel::GetMessage(const QModelIndex &index) const
 {
-	auto msgModel = qobject_cast<PLogMessageModel *>(sourceModel());
+	auto msgModel = qobject_cast<PMessageModel *>(sourceModel());
 	if (!msgModel) return false;
 	return msgModel->GetLogMessage(mapToSource(index));
 }
 
-bool PLogFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+bool PMessageFilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-	auto msgModel = qobject_cast<PLogMessageModel *>(sourceModel());
+	auto msgModel = qobject_cast<PMessageModel *>(sourceModel());
 	if (!msgModel) return false;
 	auto message = msgModel->GetLogMessage(msgModel->index(source_row, 0));
 	if (!message) return false;
