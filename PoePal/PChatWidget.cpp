@@ -297,9 +297,16 @@ void PChatWidget::OnNewMessage(PMessage *message)
 			ui._WhisperTabs->insertTab(0, textEdit, message->GetSubject());
 			if (numTabs > 0 && message->IsIncoming())
 			{
-				ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
+				if (message->GetSubtype() == PMessage::Chat)
+				{
+					ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
+				}
 			}
 			else ui._WhisperTabs->tabBar()->setCurrentIndex(0);
+		}
+		if (message->GetSubtype() != PMessage::Chat)
+		{
+			if (message->GetContents() != tr("That character is not online.")) return;
 		}
 		auto edit = qobject_cast<QPlainTextEdit *>(ui._WhisperTabs->widget(0));
 		Q_ASSERT(edit);
