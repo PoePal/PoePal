@@ -81,6 +81,9 @@
     <ClCompile Include="PStatusWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PPassivesWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PoePal.qrc">
@@ -116,6 +119,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="PStatusWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="PPassivesWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -163,6 +169,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PStatusWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PPassivesWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

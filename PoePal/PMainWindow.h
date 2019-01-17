@@ -106,6 +106,11 @@ public slots:
 	 */
 	void Whisper(const QString &player);
 
+	/**
+	 * Shows the passives window.
+	 */
+	void ShowPassivesWindow();
+
 protected:
 
 	/**

@@ -21,6 +21,7 @@
 #include "PJSConsoleWidget.h"
 #include "PLogWidget.h"
 #include "PMessageHandler.h"
+#include "PPassivesWindow.h"
 #include "PStatusWidget.h"
 #include <QJsonDocument>
 #include <QMenu>
@@ -78,6 +79,7 @@ PMainWindow::PMainWindow(QWidget *parent)
 	connect(ui._MenagerieAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._RemainingAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::ShowPassivesWindow);
 
 	connect(_ChatDropDown, &QToolButton::clicked, this, &PMainWindow::ConfigureCustomChatWidgets);
 	connect(ui._UpdateAction, &QAction::triggered, this, &PMainWindow::CheckForUpdates);
@@ -156,6 +158,25 @@ void PMainWindow::Whisper(const QString &player)
 		ui._WhisperAction->setChecked(true);
 		widget->raise();
 		widget->SetWhisperTarget(player);
+	}
+}
+
+void PMainWindow::ShowPassivesWindow()
+{
+	bool found = false;
+	for (const auto &window : ui._MDI->subWindowList())
+	{
+		auto passivesWindow = qobject_cast<PPassivesWindow *>(window);
+		if (!passivesWindow) continue;
+		ui._MDI->setActiveSubWindow(passivesWindow);
+		found = true;
+		break;
+	}
+	if (!found)
+	{
+		auto newWin = new PPassivesWindow(ui._MDI);
+		ui._MDI->addSubWindow(newWin);
+		newWin->show();
 	}
 }
 
