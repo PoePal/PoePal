@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PStatusWidget</class>
+ <widget class="QDockWidget" name="PStatusWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>265</width>
+    <height>197</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Status</string>
+  </property>
+  <widget class="QWidget" name="_ContentWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QToolButton" name="_StatusBtn">
+      <property name="text">
+       <string>...</string>
+      </property>
+      <property name="popupMode">
+       <enum>QToolButton::MenuButtonPopup</enum>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="_Grid">
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="_DNDMsgEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="_AFKMsgLbl">
+        <property name="text">
+         <string>AFK message: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="_AFKMsgEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="_AutoReplyLbl">
+        <property name="text">
+         <string>Auto Reply: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="_AutoReplyEdit"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="_DNDMsgLbl">
+        <property name="text">
+         <string>DND message: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="_PartyDescEdit"/>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="_PartyDescLbl">
+        <property name="text">
+         <string>Party description: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="_StatusMsgLbl">
+        <property name="text">
+         <string>Status message: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="_StatusMsgEdit"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="_BottomSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <action name="_AvailableAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/status_online.png</normaloff>:/PoePal/Resources/32x32/status_online.png</iconset>
+   </property>
+   <property name="text">
+    <string>Available</string>
+   </property>
+  </action>
+  <action name="_AFKAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/status_away.png</normaloff>:/PoePal/Resources/32x32/status_away.png</iconset>
+   </property>
+   <property name="text">
+    <string>AFK</string>
+   </property>
+  </action>
+  <action name="_DNDAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/status_busy.png</normaloff>:/PoePal/Resources/32x32/status_busy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Do Not Disturb</string>
+   </property>
+  </action>
+  <action name="_AutoReplyAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/status_autoreply.png</normaloff>:/PoePal/Resources/32x32/status_autoreply.png</iconset>
+   </property>
+   <property name="text">
+    <string>Auto Reply</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="PoePal.qrc"/>
+ </resources>
+ <connections/>
+</ui>

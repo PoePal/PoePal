@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="/PoePal">
+    <file>Resources/32x32/status_autoreply.png</file>
+    <file>Resources/32x32/status_online.png</file>
+    <file>Resources/32x32/status_busy.png</file>
+    <file>Resources/32x32/do_not_disturb.png</file>
+    <file>Resources/32x32/status_away.png</file>
     <file>Resources/32x32/vcard.png</file>
     <file>Resources/32x32/stickman.png</file>
     <file>Resources/32x32/arrow_refresh.png</file>

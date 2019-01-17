@@ -21,6 +21,7 @@
 #include "PJSConsoleWidget.h"
 #include "PLogWidget.h"
 #include "PMessageHandler.h"
+#include "PStatusWidget.h"
 #include <QJsonDocument>
 #include <QMenu>
 #include <QMessageBox>
@@ -39,6 +40,7 @@ PMainWindow::PMainWindow(QWidget *parent)
 	InitializeDockWidget(_LogWidget = new PLogWidget(this), Qt::BottomDockWidgetArea, ui._MessagesAction);
 	InitializeDockWidget(_JSConsole = new PJSConsoleWidget(this), Qt::BottomDockWidgetArea, 
 		ui._ConsoleAction);
+	InitializeDockWidget(_StatusWidget = new PStatusWidget(this), Qt::LeftDockWidgetArea, ui._StatusAction);
 	QSettings settings;
 	settings.beginGroup(QStringLiteral("Chat"));
 	settings.beginGroup(QStringLiteral("DefaultWidgets"));

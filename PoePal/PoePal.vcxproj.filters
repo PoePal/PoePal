@@ -78,6 +78,9 @@
     <ClCompile Include="PMessageFilterModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PStatusWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PoePal.qrc">
@@ -110,6 +113,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="PApplicationUpdateWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="PStatusWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -154,6 +160,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PMessageFilterModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PStatusWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -85,6 +85,7 @@
    <addaction name="_MenagerieAction"/>
    <addaction name="_RemainingAction"/>
    <addaction name="_PassivesAction"/>
+   <addaction name="_StatusAction"/>
   </widget>
   <widget class="QToolBar" name="_SystemToolbar">
    <property name="windowTitle">
@@ -350,6 +351,9 @@
    </property>
   </action>
   <action name="_StatusAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="PoePal.qrc">
      <normaloff>:/PoePal/Resources/32x32/vcard.png</normaloff>:/PoePal/Resources/32x32/vcard.png</iconset>

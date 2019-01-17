@@ -23,6 +23,7 @@
 class PChatWidget;
 class PJSConsoleWidget;
 class PLogWidget;
+class PStatusWidget;
 class QActionGroup;
 class QMenu;
 class QMessageBox;
@@ -196,6 +197,11 @@ private:
 	 * The JS Console widget.
 	 */
 	PJSConsoleWidget *_JSConsole = nullptr;
+
+	/**
+	 * The status widget.
+	 */
+	PStatusWidget *_StatusWidget = nullptr;
 
 	/**
 	 * The drop-down button for custom chat windows.
