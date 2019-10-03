@@ -5,3 +5,6 @@ version.txt
 installer/ReleaseNotes.txt
 installer/config/config.xml
 installer/packages/com.PoePal.PoePal/meta/package.xml
+*.aps
+x64/
+PoePal/PoePal.vcxproj.user
