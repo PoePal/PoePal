@@ -19,7 +19,7 @@
 #include "ui_PChatOptionsWidget.h"
 #include "PMessage.h"
 
-class PChatWidget;
+class PChatDockWidget;
 
 /**
  * The user interface for defining options for a chat widget.
@@ -55,7 +55,7 @@ public:
 	 * @param[in] widget
 	 *   The widget being configured.
 	 */
-	void SetWidget(PChatWidget *widget);
+	void SetWidget(PChatDockWidget *widget);
 
 	/**
 	 * Saves the settings to the given chat widget.
@@ -79,7 +79,7 @@ private:
 	/**
 	 * The chat widget being configured.
 	 */
-	PChatWidget *_Widget = nullptr;
+	PChatDockWidget *_Widget = nullptr;
 
 	Ui::PChatOptionsWidget ui;
 };

@@ -15,6 +15,7 @@
  */
 #include "PChatWidgetsWidget.h"
 #include "PApplication.h"
+#include "PChatDockWidget.h"
 #include "PChatOptionsWidget.h"
 #include "PChatWidget.h"
 #include "PMainWindow.h"
@@ -66,8 +67,9 @@ void PChatWidgetsWidget::OnChatWidgetChanged()
 {
 	int idx = ui._WidgetCombo->currentIndex();
 	if (idx < 0) return;
-	auto widget = ui._WidgetCombo->currentData().value<PChatWidget *>();
-	ui._DeleteWidgetBtn->setEnabled(widget && widget->GetDefaultChannel() == PMessage::InvalidChannel);
+	auto widget = ui._WidgetCombo->currentData().value<PChatDockWidget *>();
+	ui._DeleteWidgetBtn->setEnabled(widget && 
+		widget->GetChatWidget()->GetDefaultChannel() == PMessage::InvalidChannel);
 	UpdateWidgetsCombo();
 }
 
@@ -88,7 +90,7 @@ void PChatWidgetsWidget::OnRemoveClicked()
 {
 	int idx = ui._WidgetCombo->currentIndex();
 	if (idx < 0) return;
-	auto widget = ui._WidgetCombo->currentData().value<PChatWidget *>();
+	auto widget = ui._WidgetCombo->currentData().value<PChatDockWidget *>();
 	auto stackWidget = ui._WidgetStack->widget(idx);
 	ui._WidgetStack->removeWidget(stackWidget);
 	stackWidget->deleteLater();
@@ -115,7 +117,7 @@ void PChatWidgetsWidget::AddDefaultChatWidget(PMessage::Channel channel)
 	AddChatWidget(widget);
 }
 
-void PChatWidgetsWidget::AddChatWidget(PChatWidget *widget)
+void PChatWidgetsWidget::AddChatWidget(PChatDockWidget *widget)
 {
 	if (!widget)
 	{

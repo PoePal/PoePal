@@ -16,6 +16,7 @@
 #include "PMainWindow.h"
 #include "PApplication.h"
 #include "PApplicationUpdateWidget.h"
+#include "PChatDockWidget.h"
 #include "PChatWidget.h"
 #include "PChatWidgetsDlg.h"
 #include "PJSConsoleWidget.h"
@@ -74,11 +75,13 @@ PMainWindow::PMainWindow(QWidget *parent)
 	ui._MenagerieAction->setProperty("action", QVariant::fromValue(PMessageHandler::Menagerie));
 	ui._RemainingAction->setProperty("action", QVariant::fromValue(PMessageHandler::Remaining));
 	ui._PassivesAction->setProperty("action", QVariant::fromValue(PMessageHandler::Passives));
+	ui._DelveAction->setProperty("action", QVariant::fromValue(PMessageHandler::Delve));
 
 	connect(ui._HideoutAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._MenagerieAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._RemainingAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(ui._DelveAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
 	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::ShowPassivesWindow);
 
 	connect(_ChatDropDown, &QToolButton::clicked, this, &PMainWindow::ConfigureCustomChatWidgets);
@@ -94,12 +97,12 @@ PMainWindow::~PMainWindow()
 {
 }
 
-QList<PChatWidget *> PMainWindow::GetCustomChatWidgets() const
+QList<PChatDockWidget *> PMainWindow::GetCustomChatWidgets() const
 {
 	return _CustomChatWidgets;
 }
 
-PChatWidget * PMainWindow::CreateCustomChatWidget()
+PChatDockWidget * PMainWindow::CreateCustomChatWidget()
 {
 	QStringList existingNames;
 	for (const auto &existing : _CustomChatWidgets) existingNames.append(existing->objectName());
@@ -116,12 +119,12 @@ PChatWidget * PMainWindow::CreateCustomChatWidget()
 	return widget;
 }
 
-PChatWidget * PMainWindow::GetDefaultChatWidget(PMessage::Channel channel) const
+PChatDockWidget * PMainWindow::GetDefaultChatWidget(PMessage::Channel channel) const
 {
 	return _DefaultChatWidgets.value(channel, nullptr);
 }
 
-void PMainWindow::RemoveCustomChatWidget(PChatWidget *widget)
+void PMainWindow::RemoveCustomChatWidget(PChatDockWidget *widget)
 {
 	_CustomChatWidgets.removeAll(widget);
 	auto action = widget->property("associatedAction").value<QAction *>();
@@ -157,7 +160,7 @@ void PMainWindow::Whisper(const QString &player)
 	{
 		ui._WhisperAction->setChecked(true);
 		widget->raise();
-		widget->SetWhisperTarget(player);
+		widget->GetChatWidget()->SetWhisperTarget(player);
 	}
 }
 
@@ -169,6 +172,7 @@ void PMainWindow::ShowPassivesWindow()
 		auto passivesWindow = qobject_cast<PPassivesWindow *>(window);
 		if (!passivesWindow) continue;
 		ui._MDI->setActiveSubWindow(passivesWindow);
+		passivesWindow->show();
 		found = true;
 		break;
 	}
@@ -187,7 +191,7 @@ void PMainWindow::closeEvent(QCloseEvent *evt)
 	settings.beginGroup(QStringLiteral("DefaultWidgets"));
 	for (const auto &chatWidget : _DefaultChatWidgets.values())
 	{
-		settings.beginGroup(PMessage::GetStringFromChannel(chatWidget->GetDefaultChannel()));
+		settings.beginGroup(PMessage::GetStringFromChannel(chatWidget->GetChatWidget()->GetDefaultChannel()));
 		chatWidget->SaveState(settings);
 		settings.endGroup();
 	}
@@ -259,23 +263,23 @@ void PMainWindow::OnMacroTriggered()
 	handler->SendAction(action->property("action").value<PMessageHandler::Action>());
 }
 
-QQmlListProperty<PChatWidget> PMainWindow::GetCustomChatWidgetsProperty() const
+QQmlListProperty<PChatDockWidget> PMainWindow::GetCustomChatWidgetsProperty() const
 {
-	static QQmlListProperty<PChatWidget>::CountFunction countFunc = 
-		[](QQmlListProperty<PChatWidget> *prop)->int
+	static QQmlListProperty<PChatDockWidget>::CountFunction countFunc = 
+		[](QQmlListProperty<PChatDockWidget> *prop)->int
 	{
 		auto mainWin = qobject_cast<PMainWindow *>(prop->object);
 		Q_ASSERT(mainWin);
 		return mainWin->GetCustomChatWidgets().length();
 	};
-	static QQmlListProperty<PChatWidget>::AtFunction atFunc = 
-		[](QQmlListProperty<PChatWidget> *prop, int index)->PChatWidget *
+	static QQmlListProperty<PChatDockWidget>::AtFunction atFunc =
+		[](QQmlListProperty<PChatDockWidget> *prop, int index)->PChatDockWidget*
 	{
 		auto mainWin = qobject_cast<PMainWindow *>(prop->object);
 		Q_ASSERT(mainWin);
 		return mainWin->GetCustomChatWidgets().at(index);
 	};
-	return QQmlListProperty<PChatWidget>(const_cast<PMainWindow *>(this), nullptr, countFunc, atFunc);
+	return QQmlListProperty<PChatDockWidget>(const_cast<PMainWindow *>(this), nullptr, countFunc, atFunc);
 }
 
 void PMainWindow::InitializeDockWidget(QDockWidget *widget, Qt::DockWidgetArea dockLocation, QAction *action)
@@ -289,7 +293,7 @@ void PMainWindow::InitializeDockWidget(QDockWidget *widget, Qt::DockWidgetArea d
 void PMainWindow::InitializeDefaultChatWidget(PMessage::Channel channel, QAction *action,
 	QSettings &settings)
 {
-	auto widget = new PChatWidget(channel, this);
+	auto widget = new PChatDockWidget(channel, this);
 	_DefaultChatWidgets.insert(channel, widget);
 	InitializeDockWidget(widget, Qt::LeftDockWidgetArea, action);
 	settings.beginGroup(PMessage::GetStringFromChannel(channel));
@@ -297,7 +301,7 @@ void PMainWindow::InitializeDefaultChatWidget(PMessage::Channel channel, QAction
 	settings.endGroup();
 }
 
-void PMainWindow::InitializeCustomChatWidget(PChatWidget *widget)
+void PMainWindow::InitializeCustomChatWidget(PChatDockWidget*widget)
 {
 	if (!_CustomChatMenu)
 	{
@@ -311,9 +315,9 @@ void PMainWindow::InitializeCustomChatWidget(PChatWidget *widget)
 	InitializeDockWidget(widget, Qt::LeftDockWidgetArea, action);
 }
 
-PChatWidget * PMainWindow::CreateChatWidget(const QString &objName)
+PChatDockWidget* PMainWindow::CreateChatWidget(const QString &objName)
 {
-	auto newWidget = new PChatWidget(this);
+	auto newWidget = new PChatDockWidget(this);
 	newWidget->setObjectName(objName);
 	addDockWidget(Qt::LeftDockWidgetArea, newWidget);
 	return newWidget;

@@ -16,7 +16,7 @@
 #pragma once
 
 #include "PMessage.h"
-#include <QDockWidget>
+#include <QWidget>
 #include "ui_PChatWidget.h"
 
 class QSettings;
@@ -24,7 +24,7 @@ class QSettings;
 /**
  * Dock widget that shows a chat channel.
  */
-class PChatWidget : public QDockWidget
+class PChatWidget : public QWidget, public Ui::PChatWidget
 {
 	Q_OBJECT
 
@@ -96,36 +96,9 @@ public:
 	QPlainTextEdit * GetEntryWidget() const;
 
 	/**
-	 * Loads the state of the widget from settings.
-	 * @param[in] settings
-	 *   The settings from which to load the state.
-	 */
-	void LoadState(const QSettings &settings);
-
-	/**
-	 * Saves the state of the widget to settings.
-	 * @param[in] settings
-	 *   The settings to which to save the state.
-	 */
-	void SaveState(QSettings &settings) const;
-
-public slots:
-
-	/**
 	 * Submits the entered text.
 	 */
 	void Submit();
-
-	/**
-	 * Configures the chat widget.
-	 */
-	void Configure();
-
-	/**
-	 * Removes the chat widget.
-	 * This is ignored if the chat widget is a default chat widget.
-	 */
-	void Remove();
 
 	/**
 	 * Sets the whisper target for the widget.
@@ -140,6 +113,13 @@ protected:
 	 * Overrides QDockWidget#eventFilter.
 	 */
 	virtual bool eventFilter(QObject *watched, QEvent *evt) override;
+
+	/**
+	 * Indicates whether or not to take back focus when done sending a message. 
+	 * @return
+	 *   true if the window should take back focus, false otherwise.
+	 */
+	virtual bool ShouldRetainFocus() const;
 
 private slots:
 
@@ -178,6 +158,13 @@ private slots:
 	 *   The action that was triggered.
 	 */
 	void OnContextMenuTriggered(QAction *action);
+
+	/**
+	 * Slot called when a tab is closed.
+	 * @param[in] idx
+	 *   The index of the tab that was closed.
+	 */
+	void OnTabClosed(int idx);
 
 private:
 
@@ -309,6 +296,4 @@ private:
 	 * The action to whisper a player.
 	 */
 	QAction *_WhisperAction = nullptr;
-
-	Ui::PChatWidget ui;
 };

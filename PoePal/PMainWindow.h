@@ -20,7 +20,7 @@
 #include <QQmlListProperty>
 #include "PMessage.h"
 
-class PChatWidget;
+class PChatDockWidget;
 class PJSConsoleWidget;
 class PLogWidget;
 class PStatusWidget;
@@ -40,7 +40,7 @@ class PMainWindow : public QMainWindow
 	/**
 	 * The custom chat widgets.
 	 */
-	Q_PROPERTY(QQmlListProperty<PChatWidget> customChatWidgets READ GetCustomChatWidgetsProperty)
+	Q_PROPERTY(QQmlListProperty<PChatDockWidget> customChatWidgets READ GetCustomChatWidgetsProperty)
 
 public:
 
@@ -61,14 +61,14 @@ public:
 	 * @return
 	 *   The list of custom chat widgets.
 	 */
-	QList<PChatWidget *> GetCustomChatWidgets() const;
+	QList<PChatDockWidget *> GetCustomChatWidgets() const;
 
 	/**
 	 * Creates a new custom chat widget.
 	 * @return
 	 *   The new custom chat widget.
 	 */
-	Q_INVOKABLE PChatWidget * CreateCustomChatWidget();
+	Q_INVOKABLE PChatDockWidget * CreateCustomChatWidget();
 
 	/**
 	 * Retrieves the default chat widget for a channel.
@@ -77,14 +77,14 @@ public:
 	 * @return
 	 *   The default chat widget for the channel.
 	 */
-	Q_INVOKABLE PChatWidget * GetDefaultChatWidget(PMessage::Channel channel) const;
+	Q_INVOKABLE PChatDockWidget * GetDefaultChatWidget(PMessage::Channel channel) const;
 
 	/**
 	 * Removes the given custom chat widget.
 	 * @param[in] widget
 	 *   The custom chat widget to remove.
 	 */
-	void RemoveCustomChatWidget(PChatWidget *widget);
+	void RemoveCustomChatWidget(PChatDockWidget *widget);
 
 public slots:
 
@@ -143,7 +143,7 @@ private:
 	 * @return
 	 *   The custom chat widgets list property.
 	 */
-	QQmlListProperty<PChatWidget> GetCustomChatWidgetsProperty() const;
+	QQmlListProperty<PChatDockWidget> GetCustomChatWidgetsProperty() const;
 
 	/**
 	 * Initializes a dock widget.
@@ -172,7 +172,7 @@ private:
 	 * @param[in] widget
 	 *   The custom chat widget.
 	 */
-	void InitializeCustomChatWidget(PChatWidget *widget);
+	void InitializeCustomChatWidget(PChatDockWidget *widget);
 
 	/**
 	 * Creates a chat widget.
@@ -181,7 +181,7 @@ private:
 	 * @return
 	 *   The new dock widget.
 	 */
-	PChatWidget * CreateChatWidget(const QString &objName);
+	PChatDockWidget * CreateChatWidget(const QString &objName);
 
 	/**
 	 * The log dock widget.
@@ -191,12 +191,12 @@ private:
 	/**
 	 * The default channels.
 	 */
-	QHash<PMessage::Channel, PChatWidget *> _DefaultChatWidgets;
+	QHash<PMessage::Channel, PChatDockWidget *> _DefaultChatWidgets;
 
 	/**
 	 * The list of custom chat widgets.
 	 */
-	QList<PChatWidget *> _CustomChatWidgets;
+	QList<PChatDockWidget *> _CustomChatWidgets;
 
 	/**
 	 * The JS Console widget.

@@ -124,6 +124,8 @@ public:
 	 *   Forces a recheck of certain achievements.
 	 * @param Autoreply
 	 *   Replying with <message> when someone whispers you.
+	 * @param Delve
+	 *   Enters the Azurite Mine.
 	 */
 	enum Action
 	{
@@ -166,7 +168,8 @@ public:
 		Exit,
 		ResetXp,
 		RecheckAchievements,
-		Autoreply
+		Autoreply,
+		Delve
 	};
 	Q_ENUM(Action)
 

@@ -84,6 +84,9 @@
     <ClCompile Include="PPassivesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PChatDockWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PoePal.qrc">
@@ -172,6 +175,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PPassivesWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PChatDockWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

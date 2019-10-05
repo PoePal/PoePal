@@ -110,13 +110,13 @@ public:
 };
 
 PChatWidget::PChatWidget(QWidget *parent /*= Q_NULLPTR*/):
-QDockWidget(parent)
+	QWidget(parent)
 {
 	Initialize();
 }
 
 PChatWidget::PChatWidget(PMessage::Channel defaultChannel, QWidget *parent /*= Q_NULLPTR*/):
-QDockWidget(parent)
+	QWidget(parent)
 {
 	_DefaultChannel = defaultChannel;
 	_Channels = defaultChannel;
@@ -153,33 +153,14 @@ void PChatWidget::SetChannels(int channels)
 
 QPlainTextEdit * PChatWidget::GetEntryWidget() const
 {
-	return ui._EntryEdit;
-}
-
-void PChatWidget::LoadState(const QSettings &settings)
-{
-	if (_DefaultChannel == PMessage::InvalidChannel)
-	{
-		_Channels = static_cast<PMessage::Channel>(settings.value(QStringLiteral("Channels")).toInt());
-		setWindowTitle(settings.value(QStringLiteral("Title")).toString());
-	}
-	UpdateForChannels();
-}
-
-void PChatWidget::SaveState(QSettings &settings) const
-{
-	if (_DefaultChannel == PMessage::InvalidChannel)
-	{
-		settings.setValue(QStringLiteral("Title"), windowTitle());
-		settings.setValue(QStringLiteral("Channels"), static_cast<int>(_Channels));
-	}
+	return _EntryEdit;
 }
 
 void PChatWidget::Submit()
 {
-	auto text = ui._EntryEdit->toPlainText().trimmed();
+	auto text = _EntryEdit->toPlainText().trimmed();
 	auto channel = GetCurrentChannel();
-	ui._EntryEdit->clear();
+	_EntryEdit->clear();
 	SetCurrentChannel(channel);
 	// Strip off the channel prefix.
 	if (GetCurrentChannel() != PMessage::Local)
@@ -201,34 +182,21 @@ void PChatWidget::Submit()
 	Q_ASSERT(app);
 	auto handler = app->GetMessageHandler();
 	Q_ASSERT(handler);
-	handler->SendChatMessage(GetCurrentChannel(), text, target);
-}
-
-void PChatWidget::Configure()
-{
-	PChatOptionsDlg::SetOptionsModal(this);
-}
-
-void PChatWidget::Remove()
-{
-	if (_DefaultChannel != PMessage::InvalidChannel) return;
-	auto app = qobject_cast<PApplication *>(qApp);
-	Q_ASSERT(app);
-	app->GetMainWindow()->RemoveCustomChatWidget(this);
+	handler->SendChatMessage(GetCurrentChannel(), text, target, ShouldRetainFocus());
 }
 
 void PChatWidget::SetWhisperTarget(const QString &target)
 {
-	ui._EntryEdit->setPlainText("@" + target + " ");
-	auto cursor = ui._EntryEdit->textCursor();
+	_EntryEdit->setPlainText("@" + target + " ");
+	auto cursor = _EntryEdit->textCursor();
 	cursor.movePosition(QTextCursor::End);
-	ui._EntryEdit->setTextCursor(cursor);
-	ui._EntryEdit->setFocus(Qt::TabFocusReason);
+	_EntryEdit->setTextCursor(cursor);
+	_EntryEdit->setFocus(Qt::TabFocusReason);
 }
 
 bool PChatWidget::eventFilter(QObject *watched, QEvent *evt)
 {
-	if (watched == ui._EntryEdit)
+	if (watched == _EntryEdit)
 	{
 		if (evt->type() == QEvent::KeyPress)
 		{
@@ -240,7 +208,7 @@ bool PChatWidget::eventFilter(QObject *watched, QEvent *evt)
 			}
 		}
 	}
-	else if (watched == ui._DisplayEdit)
+	else if (watched == _DisplayEdit)
 	{
 		if (evt->type() == QEvent::ContextMenu)
 		{
@@ -248,35 +216,40 @@ bool PChatWidget::eventFilter(QObject *watched, QEvent *evt)
 			_ContextMenu->popup(contextEvent->pos());
 		}
 	}
-	return QDockWidget::eventFilter(watched, evt);
+	return QWidget::eventFilter(watched, evt);
+}
+
+bool PChatWidget::ShouldRetainFocus() const
+{
+	return true;
 }
 
 void PChatWidget::OnNewMessage(PMessage *message)
 {
 	if (!CheckMessage(message)) return;
-	if (ui._DisplayEdit->isVisible())
+	if (_DisplayEdit->isVisible())
 	{
-		auto wasAtEnd = ui._DisplayEdit->verticalScrollBar()->value() >= 
-			ui._DisplayEdit->verticalScrollBar()->maximum()-2;
-		auto doc = ui._DisplayEdit->document();
+		auto wasAtEnd = _DisplayEdit->verticalScrollBar()->value() >= 
+			_DisplayEdit->verticalScrollBar()->maximum()-2;
+		auto doc = _DisplayEdit->document();
 		QTextCursor cursor(doc);
 		cursor.movePosition(QTextCursor::End);
 		if(!doc->isEmpty()) cursor.insertBlock();
 		cursor.block().setUserData(new PTextBlockMessageData(message));
 		cursor.insertHtml(FormatMessage(message));
-		if (ui._DisplayEdit->textCursor().selectedText().isEmpty() && wasAtEnd)
+		if (_DisplayEdit->textCursor().selectedText().isEmpty() && wasAtEnd)
 		{
-			ui._DisplayEdit->setTextCursor(cursor);
-			ui._DisplayEdit->ensureCursorVisible();
+			_DisplayEdit->setTextCursor(cursor);
+			_DisplayEdit->ensureCursorVisible();
 		}
 	}
 	else
 	{
-		int numTabs = ui._WhisperTabs->tabBar()->count();
+		int numTabs = _WhisperTabs->tabBar()->count();
 		int idx = -1;
 		for (int t = 0; t < numTabs; ++t)
 		{
-			if (ui._WhisperTabs->tabBar()->tabText(t) == message->GetSubject()) idx = t;
+			if (_WhisperTabs->tabBar()->tabText(t) == message->GetSubject()) idx = t;
 		}
 		if (message->GetSubject().isEmpty())
 		{
@@ -285,30 +258,30 @@ void PChatWidget::OnNewMessage(PMessage *message)
 		}
 		if (idx >= 0)
 		{
-			auto isSel = ui._WhisperTabs->currentIndex() == idx;
-			ui._WhisperTabs->tabBar()->moveTab(idx, 0);
-			if(isSel) ui._WhisperTabs->setCurrentIndex(0);
-			else if(message->IsIncoming()) ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
+			auto isSel = _WhisperTabs->currentIndex() == idx;
+			_WhisperTabs->tabBar()->moveTab(idx, 0);
+			if(isSel) _WhisperTabs->setCurrentIndex(0);
+			else if(message->IsIncoming()) _WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
 		}
 		else
 		{
-			auto textEdit = new QPlainTextEdit(ui._WhisperTabs);
+			auto textEdit = new QPlainTextEdit(_WhisperTabs);
 			textEdit->setReadOnly(true);
-			ui._WhisperTabs->insertTab(0, textEdit, message->GetSubject());
+			_WhisperTabs->insertTab(0, textEdit, message->GetSubject());
 			if (numTabs > 0 && message->IsIncoming())
 			{
 				if (message->GetSubtype() == PMessage::Chat)
 				{
-					ui._WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
+					_WhisperTabs->tabBar()->setTabTextColor(0, Qt::red);
 				}
 			}
-			else ui._WhisperTabs->tabBar()->setCurrentIndex(0);
+			else _WhisperTabs->tabBar()->setCurrentIndex(0);
 		}
 		if (message->GetSubtype() != PMessage::Chat)
 		{
 			if (message->GetContents() != tr("That character is not online.")) return;
 		}
-		auto edit = qobject_cast<QPlainTextEdit *>(ui._WhisperTabs->widget(0));
+		auto edit = qobject_cast<QPlainTextEdit *>(_WhisperTabs->widget(0));
 		Q_ASSERT(edit);
 		edit->appendHtml(FormatMessage(message));
 	}
@@ -316,10 +289,11 @@ void PChatWidget::OnNewMessage(PMessage *message)
 
 void PChatWidget::OnEntryChanged()
 {
-	auto doc = ui._EntryEdit->document();
-	doc->setTextWidth(ui._EntryEdit->width()-2);
-	auto height = doc->size().height();
-	ui._EntryEdit->setMinimumHeight(height+2);
+	QTextDocument doc;
+	doc.setTextWidth(_EntryEdit->width()-2);
+	doc.setPlainText(_EntryEdit->toPlainText());
+	auto height = doc.documentLayout()->documentSize().height();
+	_EntryEdit->setMinimumHeight(height+2);
 	UpdateChannelForPrefix();
 }
 
@@ -331,10 +305,10 @@ void PChatWidget::OnChannelSelected()
 
 void PChatWidget::OnTabSelected()
 {
-	int sel = ui._WhisperTabs->tabBar()->currentIndex();
-	ui._WhisperTabs->tabBar()->setTabTextColor(sel, Qt::black);
+	int sel = _WhisperTabs->tabBar()->currentIndex();
+	_WhisperTabs->tabBar()->setTabTextColor(sel, Qt::black);
 	// Change the target of the whisper to the current tab.
-	auto text = ui._EntryEdit->toPlainText().trimmed();
+	auto text = _EntryEdit->toPlainText().trimmed();
 	// Get rid of the '@'
 	text = text.mid(1).trimmed();
 	// The target is the next characters up to the space, so strip it too.
@@ -343,21 +317,21 @@ void PChatWidget::OnTabSelected()
 	auto target = text.left(ch);
 	text = text.mid(ch).trimmed();
 	// If the target is not correct, set it.
-	if (ui._WhisperTabs->tabText(sel) != target)
+	if (_WhisperTabs->tabText(sel) != target)
 	{
-		text.prepend(ui._WhisperTabs->tabText(sel) + ' ');
+		text.prepend(_WhisperTabs->tabText(sel) + ' ');
 		text.prepend(PMessage::GetPrefixFromChannel(PMessage::Whisper));
-		ui._EntryEdit->setPlainText(text);
-		auto cursor = ui._EntryEdit->textCursor();
+		_EntryEdit->setPlainText(text);
+		auto cursor = _EntryEdit->textCursor();
 		cursor.movePosition(QTextCursor::End);
-		ui._EntryEdit->setTextCursor(cursor);
+		_EntryEdit->setTextCursor(cursor);
 	}
 }
 
 void PChatWidget::OnContextMenuRequested(const QPoint &pos)
 {
-	_ContextMenu->popup(ui._DisplayEdit->mapToGlobal(pos));
-	auto cursor = ui._DisplayEdit->cursorForPosition(pos);
+	_ContextMenu->popup(_DisplayEdit->mapToGlobal(pos));
+	auto cursor = _DisplayEdit->cursorForPosition(pos);
 	auto userData = static_cast<PTextBlockMessageData *>(cursor.block().userData());
 	if (userData) _ContextMenu->setProperty("msg", QVariant::fromValue(userData->GetLogMessage()));
 	else
@@ -388,6 +362,14 @@ void PChatWidget::OnContextMenuTriggered(QAction *action)
 	}
 }
 
+void PChatWidget::OnTabClosed(int idx)
+{
+	auto widget = _WhisperTabs->widget(idx);
+	_WhisperTabs->removeTab(idx);
+	widget->deleteLater();
+	if (_WhisperTabs->count() == 0) deleteLater();
+}
+
 bool PChatWidget::CheckMessage(PMessage *message)
 {
 	return _Channels.testFlag(message->GetChannel()) || 
@@ -410,9 +392,9 @@ void PChatWidget::PrependMessages()
 		_TopIdx = m;
 	}
 	contents.resize(contents.length() - 6);
-	contents.append(ui._DisplayEdit->document()->toHtml());
-	ui._DisplayEdit->clear();
-	ui._DisplayEdit->appendHtml(contents);
+	contents.append(_DisplayEdit->document()->toHtml());
+	_DisplayEdit->clear();
+	_DisplayEdit->appendHtml(contents);
 }
 
 QString PChatWidget::FormatMessage(PMessage *message) const
@@ -444,21 +426,21 @@ QString PChatWidget::FormatMessage(PMessage *message) const
 
 void PChatWidget::Initialize()
 {
-	ui.setupUi(this);
+	setupUi(this);
 	auto app = qobject_cast<PApplication *>(qApp);
 	if (_DefaultChannel != PMessage::InvalidChannel)
 	{
 		setWindowTitle(PMessage::GetChannelLabel(_DefaultChannel));
 	}
 	Q_ASSERT(app);
-	ui._WhisperTabs->tabBar()->setStyle(new PHorizontalTabStyle());
-	connect(ui._EntryEdit, &QPlainTextEdit::textChanged, this, &PChatWidget::OnEntryChanged);
-	connect(ui._DisplayEdit, &QWidget::customContextMenuRequested, this, &PChatWidget::OnContextMenuRequested);
-	connect(ui._WhisperTabs->tabBar(), &QTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
-	ui._EntryEdit->installEventFilter(this);
+	_WhisperTabs->tabBar()->setStyle(new PHorizontalTabStyle());
+	connect(_EntryEdit, &QPlainTextEdit::textChanged, this, &PChatWidget::OnEntryChanged);
+	connect(_DisplayEdit, &QWidget::customContextMenuRequested, this, &PChatWidget::OnContextMenuRequested);
+	connect(_WhisperTabs->tabBar(), &QTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
+	_EntryEdit->installEventFilter(this);
 	PrependMessages();
 	auto scanner = app->GetMessageHandler();
-	ui._DisplayEdit->verticalScrollBar()->setValue(ui._DisplayEdit->verticalScrollBar()->maximum());
+	_DisplayEdit->verticalScrollBar()->setValue(_DisplayEdit->verticalScrollBar()->maximum());
 	connect(scanner, &PMessageHandler::NewMessage, this, &PChatWidget::OnNewMessage);
 	_ContextMenu = new QMenu(this);
 	_FriendAction = _ContextMenu->addAction(tr("Add Friend"));
@@ -472,10 +454,11 @@ void PChatWidget::Initialize()
 	_WhisperAction = _ContextMenu->addAction(tr("Whisper"));
 	_ContextMenu->addSeparator();
 	_CopyAction = _ContextMenu->addAction(tr("Copy Text"));
-	_CopyAction->setEnabled(!ui._DisplayEdit->textCursor().selectedText().isEmpty());
+	_CopyAction->setEnabled(!_DisplayEdit->textCursor().selectedText().isEmpty());
 	connect(_ContextMenu, &QMenu::triggered, this, &PChatWidget::OnContextMenuTriggered);
-	connect(ui._DisplayEdit, &QPlainTextEdit::copyAvailable, _CopyAction, &QAction::setEnabled);
-	connect(_CopyAction, &QAction::triggered, ui._DisplayEdit, &QPlainTextEdit::copy);
+	connect(_DisplayEdit, &QPlainTextEdit::copyAvailable, _CopyAction, &QAction::setEnabled);
+	connect(_CopyAction, &QAction::triggered, _DisplayEdit, &QPlainTextEdit::copy);
+	connect(_WhisperTabs, &QTabWidget::tabCloseRequested, this, &PChatWidget::OnTabClosed);
 	UpdateForChannels();
 }
 
@@ -484,7 +467,7 @@ void PChatWidget::UpdateForChannels()
 	if (!_ChannelMenu) 
 	{
 		_ChannelMenu = new QMenu(this);
-		ui._ChannelBtn->setMenu(_ChannelMenu);
+		_ChannelBtn->setMenu(_ChannelMenu);
 	}
 	_ChannelMenu->clear();
 	int channelCt = 0;
@@ -500,16 +483,16 @@ void PChatWidget::UpdateForChannels()
 	}
 	bool oneChannel = channelCt == 1;
 	SetChannelToFirst();
-	if (_DefaultChannel != PMessage::InvalidChannel) ui._ChannelBtn->hide();
-	else ui._ChannelBtn->show();
+	if (_DefaultChannel != PMessage::InvalidChannel) _ChannelBtn->hide();
+	else _ChannelBtn->show();
 	bool tabbedWhisper = oneChannel && _Channels.testFlag(PMessage::Whisper);
-	ui._WhisperTabs->setVisible(tabbedWhisper);
-	ui._DisplayEdit->setVisible(!tabbedWhisper);
+	_WhisperTabs->setVisible(tabbedWhisper);
+	_DisplayEdit->setVisible(!tabbedWhisper);
 }
 
 PMessage::Channel PChatWidget::GetCurrentChannel() const
 {
-	return ui._ChannelBtn->property("Channel").value<PMessage::Channel>();
+	return _ChannelBtn->property("Channel").value<PMessage::Channel>();
 }
 
 void PChatWidget::SetCurrentChannel(PMessage::Channel channel)
@@ -519,8 +502,8 @@ void PChatWidget::SetCurrentChannel(PMessage::Channel channel)
 		SetChannelToFirst();
 		return;
 	}
-	ui._ChannelBtn->setText(PMessage::GetChannelLabel(channel));
-	ui._ChannelBtn->setProperty("Channel", channel);
+	_ChannelBtn->setText(PMessage::GetChannelLabel(channel));
+	_ChannelBtn->setProperty("Channel", channel);
 	UpdatePrefixForChannel();
 }
 
@@ -543,7 +526,7 @@ void PChatWidget::UpdatePrefixForChannel()
 
 	// Get the current text trimmed so that the first character indicates what channel it is currently 
 	// destined for.
-	auto text = ui._EntryEdit->toPlainText().trimmed();
+	auto text = _EntryEdit->toPlainText().trimmed();
 	auto prefixChannel = text.isEmpty() ? PMessage::Local : PMessage::GetChannelFromPrefix(text[0]);
 	if (prefixChannel == PMessage::InvalidChannel) prefixChannel = PMessage::Local;
 	// If the prefix channel matches the current channel, don't do anything.
@@ -557,19 +540,19 @@ void PChatWidget::UpdatePrefixForChannel()
 	if(secondPrefix != PMessage::InvalidChannel)text = text.mid(1).trimmed();
 	if (channel != PMessage::Local) text.insert(0, PMessage::GetPrefixFromChannel(channel));
 	if (channel == PMessage::Whisper && _DefaultChannel == PMessage::Whisper &&
-		ui._WhisperTabs->count() > 0)
+		_WhisperTabs->count() > 0)
 	{
-		text += ui._WhisperTabs->tabBar()->tabText(ui._WhisperTabs->tabBar()->currentIndex()) + ' ';
+		text += _WhisperTabs->tabBar()->tabText(_WhisperTabs->tabBar()->currentIndex()) + ' ';
 	}
-	ui._EntryEdit->setPlainText(text);
-	auto cursor = ui._EntryEdit->textCursor();
+	_EntryEdit->setPlainText(text);
+	auto cursor = _EntryEdit->textCursor();
 	cursor.movePosition(QTextCursor::End);
-	ui._EntryEdit->setTextCursor(cursor);
+	_EntryEdit->setTextCursor(cursor);
 }
 
 void PChatWidget::UpdateChannelForPrefix()
 {
-	auto text = ui._EntryEdit->document()->toPlainText().trimmed();
+	auto text = _EntryEdit->document()->toPlainText().trimmed();
 	if (text.isEmpty()) SetCurrentChannel(PMessage::Local);
 	else
 	{

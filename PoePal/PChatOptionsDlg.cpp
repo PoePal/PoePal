@@ -14,7 +14,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 #include "PChatOptionsDlg.h"
-#include "PChatWidget.h"
+#include "PChatDockWidget.h"
 
 PChatOptionsDlg::PChatOptionsDlg(QWidget *parent)
 	: QDialog(parent)
@@ -33,7 +33,7 @@ PChatOptionsWidget * PChatOptionsDlg::GetOptionsWidget() const
 	return ui._ChatOptions;
 }
 
-void PChatOptionsDlg::SetOptionsModal(PChatWidget *widget)
+void PChatOptionsDlg::SetOptionsModal(PChatDockWidget *widget)
 {
 	PChatOptionsDlg dialog(widget);
 	dialog.ui._ChatOptions->SetWidget(widget);

@@ -49,7 +49,7 @@ public:
 	 * @param[in] widget
 	 *   The widget being configured.
 	 */
-	static void SetOptionsModal(PChatWidget *widget);
+	static void SetOptionsModal(PChatDockWidget *widget);
 
 private:
 	Ui::PChatOptionsDlg ui;

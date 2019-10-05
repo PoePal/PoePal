@@ -14,6 +14,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 #include "PChatOptionsWidget.h"
+#include "PChatDockWidget.h"
 #include "PChatWidget.h"
 #include <QAction>
 
@@ -32,23 +33,24 @@ QString PChatOptionsWidget::GetLabel() const
 	return ui._LabelEdit->text();
 }
 
-void PChatOptionsWidget::SetWidget(PChatWidget *widget)
+void PChatOptionsWidget::SetWidget(PChatDockWidget *widget)
 {
 	_Widget = widget;
 	if (!_Widget) return;
 	ui._LabelEdit->setText(widget->windowTitle());
-	ui._LabelEdit->setEnabled(widget->GetDefaultChannel() == PMessage::InvalidChannel);
+	auto chatWidget = widget->GetChatWidget();
+	ui._LabelEdit->setEnabled(chatWidget->GetDefaultChannel() == PMessage::InvalidChannel);
 	auto action = widget->property("associatedAction").value<QAction *>();
 	ui._ShowCheck->setChecked(action && action->isChecked());
 	ui._DockCheck->setChecked(!widget->isFloating());
-	auto defChannel = widget->GetDefaultChannel();
+	auto defChannel = chatWidget->GetDefaultChannel();
 	SetChannelViewMode(PMessage::Global, ui._GlobalCheck, defChannel);
 	SetChannelViewMode(PMessage::Trade, ui._TradeCheck, defChannel);
 	SetChannelViewMode(PMessage::Guild, ui._GuildCheck, defChannel);
 	SetChannelViewMode(PMessage::Party, ui._PartyCheck, defChannel);
 	SetChannelViewMode(PMessage::Local, ui._LocalCheck, defChannel);
 	SetChannelViewMode(PMessage::Whisper, ui._WhisperCheck, defChannel);
-	auto channels = widget->GetChannels();
+	auto channels = chatWidget->GetChannels();
 	ui._GlobalCheck->setChecked(channels.testFlag(PMessage::Global));
 	ui._TradeCheck->setChecked(channels.testFlag(PMessage::Trade));
 	ui._GuildCheck->setChecked(channels.testFlag(PMessage::Guild));
@@ -60,6 +62,7 @@ void PChatOptionsWidget::SaveToWidget()
 {
 	if (!_Widget) return;
 	_Widget->setWindowTitle(ui._LabelEdit->text());
+	auto chatWidget = _Widget->GetChatWidget();
 	auto action = _Widget->property("associatedAction").value<QAction *>();
 	if(action) action->setChecked(ui._ShowCheck->isChecked());
 	_Widget->setVisible(ui._ShowCheck->isChecked());
@@ -71,7 +74,7 @@ void PChatOptionsWidget::SaveToWidget()
 	if (ui._PartyCheck->isChecked()) channels.setFlag(PMessage::Party);
 	if (ui._LocalCheck->isChecked()) channels.setFlag(PMessage::Local);
 	if (ui._WhisperCheck->isChecked()) channels.setFlag(PMessage::Whisper);
-	_Widget->SetChannels(channels);
+	chatWidget->SetChannels(channels);
 }
 
 void PChatOptionsWidget::SetChannelViewMode(PMessage::Channel channel, QCheckBox *check, 

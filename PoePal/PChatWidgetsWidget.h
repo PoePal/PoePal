@@ -19,7 +19,7 @@
 #include "ui_PChatWidgetsWidget.h"
 #include "PMessage.h"
 
-class PChatWidget;
+class PChatDockWidget;
 
 /**
  * The user interface for editing all of the chat widgets.
@@ -83,7 +83,7 @@ private:
 	 * @param[in] window
 	 *   The chat window to add.
 	 */
-	void AddChatWidget(PChatWidget *window);
+	void AddChatWidget(PChatDockWidget*window);
 
 	Ui::PChatWidgetsWidget ui;
 };

@@ -67,7 +67,8 @@ namespace
 		"exit",
 		"reset_xp",
 		"recheck_achievements",
-		"autoreply"
+		"autoreply",
+		"delve"
 	};
 }
 

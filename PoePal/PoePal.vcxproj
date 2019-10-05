@@ -128,6 +128,7 @@ if not exist $(OutDir)ssleay32.dll powershell -Command "Start-Process cmd -Argum
     <ClCompile Include="PApplication.cpp" />
     <ClCompile Include="PApplicationUpdate.cpp" />
     <ClCompile Include="PApplicationUpdateWidget.cpp" />
+    <ClCompile Include="PChatDockWidget.cpp" />
     <ClCompile Include="PChatOptionsDlg.cpp" />
     <ClCompile Include="PChatOptionsWidget.cpp" />
     <ClCompile Include="PChatWidget.cpp" />
