@@ -73,5 +73,4 @@ void PChatDockWidget::Remove()
 void PChatDockWidget::Initialize()
 {
 	setWidget(_ChatWidget);
-	setWindowTitle(_ChatWidget->windowTitle());
 }

@@ -113,7 +113,7 @@ PApplication::PApplication(int &argc, char **argv) :
 	setApplicationVersion(GetProductVersion());
 	connect(&_ForegroundWindowTimer, &QTimer::timeout, this, &PApplication::OnCheckForegroundWindow);
 	_ForegroundWindowTimer.setInterval(100);
-	_ForegroundWindowTimer.start();
+	if(qgetenv("POEPAL_ENABLE_OVERLAY").toInt() != 0)_ForegroundWindowTimer.start();
 }
 
 PApplication::~PApplication()
