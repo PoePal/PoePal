@@ -123,7 +123,9 @@ PMessage * PMessage::FromString(const QString &string, QObject *parent)
 {
 	static QRegularExpression msgRegex(
 		"(\\d{4}\\/\\d{2}\\/\\d{2}\\s\\d{2}:\\d{2}:\\d{2})\\s(\\d+)\\s([0-9a-f]+)\\s\\[(INFO|WARN|DEBUG)\\sClient\\s(\\d+)\\]\\s(.*)");
-	static QRegularExpression chatRegex("^(\\$|#|@|&)?(From |To )?(?:\\<([^\\>]+)\\>\\s)?([^\\s:]*):\\s(.*)$");
+	static QRegularExpression chatRegex("^(\\$|#|@|&|%)?(From |To )?(?:\\<([^\\>]+)\\>\\s)?([^\\s:]*):\\s(.*)$");
+	static QRegularExpression tradeRegex(
+		"Hi, I would like to buy your ([\\w\\s+()]+) listed for (\\d+) (\\w+) in (\\w+) \\(stash tab \"([^ \\\"]+)\"; position: left(\\d + ), top(\\d + )\\)");
 	auto match = msgRegex.match(string);
 	if (!match.hasMatch()) return nullptr;
 	auto msg = new PMessage(parent);
@@ -145,6 +147,18 @@ PMessage * PMessage::FromString(const QString &string, QObject *parent)
 			msg->_Channel = GetChannelFromPrefix(chatMatch.captured(1)[0]);
 			if (msg->_Channel == Whisper) msg->_IsIncoming = chatMatch.captured(2) == tr("From ");
 			msg->_Subtype = Chat;
+			auto tradeMatch = tradeRegex.match(msg->_Contents);
+			if (tradeMatch.hasMatch())
+			{
+				msg->_TradeInfo.reset(new TradeReqInfo);
+				msg->_TradeInfo->_Item = tradeMatch.captured(1);
+				msg->_TradeInfo->_Amount = tradeMatch.captured(2).toFloat();
+				msg->_TradeInfo->_Currency = tradeMatch.captured(3);
+				msg->_TradeInfo->_League = tradeMatch.captured(4);
+				msg->_TradeInfo->_Tab = tradeMatch.captured(5);
+				msg->_TradeInfo->_Left = tradeMatch.captured(6).toInt();
+				msg->_TradeInfo->_Top = tradeMatch.captured(7).toInt();
+			}
 		}
 	}
 	else msg->_Contents = contents;
@@ -221,6 +235,53 @@ QString PMessage::GetFullSender() const
 bool PMessage::IsIncoming() const
 {
 	return _IsIncoming;
+}
+
+bool PMessage::IsTradeRequest() const
+{
+	return _TradeInfo;
+}
+
+QString PMessage::GetTradeItem() const
+{
+	if (_TradeInfo) return _TradeInfo->_Item;
+	return QString();
+}
+
+float PMessage::GetTradeAmount() const
+{
+	if (_TradeInfo) return _TradeInfo->_Amount;
+	return 0.0;
+}
+
+QString PMessage::GetTradeCurrency() const
+{
+	if (_TradeInfo) return _TradeInfo->_Currency;
+	return QString();
+}
+
+QString PMessage::GetTradeLeague() const
+{
+	if (_TradeInfo) return _TradeInfo->_League;
+	return QString();
+}
+
+QString PMessage::GetTradeTab() const
+{
+	if (_TradeInfo) return _TradeInfo->_Tab;
+	return QString();
+}
+
+int PMessage::GetTradeLeftPosition() const
+{
+	if (_TradeInfo) return _TradeInfo->_Left;
+	return 0;
+}
+
+int PMessage::GetTradeTopPosition() const
+{
+	if (_TradeInfo) return _TradeInfo->_Top;
+	return 0;
 }
 
 QString PMessage::ToString() const

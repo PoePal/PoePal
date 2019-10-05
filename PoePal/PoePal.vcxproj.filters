@@ -84,6 +84,12 @@
     <ClCompile Include="PPassivesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="POverlayBarWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="POverlayChatWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="PChatDockWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -125,6 +131,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="PPassivesWindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="POverlayBarWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -175,6 +184,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PPassivesWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="POverlayBarWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="POverlayChatWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PChatDockWidget.h">

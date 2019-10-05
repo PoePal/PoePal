@@ -18,11 +18,13 @@
 #include <QApplication>
 #include <PApplicationUpdate.h>
 #include <QPointer>
+#include <QTimer>
 
 class PChatSettings;
 class PMessageModel;
 class PMessageHandler;
 class PMainWindow;
+class POverlayBarWidget;
 class QJSEngine;
 class QNetworkAccessManager;
 
@@ -98,6 +100,13 @@ public:
 	PMainWindow * GetMainWindow() const;
 
 	/**
+	 * Retrieves the overlay bar widget.
+	 * @return
+	 *   The overlay bar widget.
+	 */
+	POverlayBarWidget * GetOverlayBarWidget() const;
+
+	/**
 	 * Retrieves the chat settings.
 	 * @return
 	 *   The chat settings.
@@ -119,6 +128,13 @@ signals:
 	 *   true if an update is available, false otherwise.
 	 */
 	void UpdateCheckFinished(bool isUpdate);
+
+private slots:
+
+	/**
+	 * Slot called when the timer is triggered to check the foreground window.
+	 */
+	void OnCheckForegroundWindow();
 
 private:
 
@@ -151,4 +167,14 @@ private:
 	 * The network access manager.
 	 */
 	QNetworkAccessManager *_Manager = nullptr;
+
+	/**
+	 * Timer to check the foreground window.
+	 */
+	QTimer _ForegroundWindowTimer;
+
+	/**
+	 * The overlay bar widget.
+	 */
+	QPointer<POverlayBarWidget> _OverlayBarWidget;
 };

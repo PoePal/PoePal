@@ -23,6 +23,7 @@
 #include "PMessageModel.h"
 #include "PMessageHandler.h"
 #include "PMainWindow.h"
+#include "POverlayBarWidget.h"
 #include "windows.h"
 
 QJSValue ChannelsToValue(PMessage::Channels channels)
@@ -110,6 +111,9 @@ PApplication::PApplication(int &argc, char **argv) :
 	setApplicationName("PoePal");
 	setOrganizationName("PoePal");
 	setApplicationVersion(GetProductVersion());
+	connect(&_ForegroundWindowTimer, &QTimer::timeout, this, &PApplication::OnCheckForegroundWindow);
+	_ForegroundWindowTimer.setInterval(100);
+	_ForegroundWindowTimer.start();
 }
 
 PApplication::~PApplication()
@@ -160,6 +164,11 @@ PMainWindow * PApplication::GetMainWindow() const
 	return _MainWindow;
 }
 
+POverlayBarWidget* PApplication::GetOverlayBarWidget() const
+{
+	return _OverlayBarWidget.data();
+}
+
 PChatSettings * PApplication::GetChatSettings() const
 {
 	return _ChatSettings;
@@ -168,4 +177,22 @@ PChatSettings * PApplication::GetChatSettings() const
 QNetworkAccessManager * PApplication::GetNetworkManager() const
 {
 	return _Manager;
+}
+
+void PApplication::OnCheckForegroundWindow()
+{
+	auto windowHwnd = GetForegroundWindow();
+	if (!windowHwnd) return;
+	WCHAR title[33];
+	title[32] = '\0]';
+	auto len = GetWindowTextW(windowHwnd, title, 32);
+	bool show = false;
+	std::wstring titleStr(title);
+	show = (titleStr == L"Path of Exile" || titleStr == L"PoePal Overlay - PoePal" || true);
+	if (show && !_OverlayBarWidget)
+	{
+		_OverlayBarWidget = new POverlayBarWidget();
+		_OverlayBarWidget->show();
+	}
+	if (_OverlayBarWidget) _OverlayBarWidget->setVisible(show);
 }

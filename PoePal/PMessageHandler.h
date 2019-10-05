@@ -227,8 +227,11 @@ public slots:
 	 *   The message to send.
 	 * @param[in] target
 	 *   The player to send the message to, if it is a whisper.
+	 * @param[in] retainFocus
+	 *   true if the currently active window should retain focus, false otherwise.
 	 */
-	void SendChatMessage(PMessage::Channel channel, const QString &message, const QString &target = QString());
+	void SendChatMessage(PMessage::Channel channel, const QString &message, const QString &target = QString(),
+		bool retainFocus=true);
 	
 	/**
 	 * Executes an action.
@@ -236,8 +239,10 @@ public slots:
 	 *   The action to perform for the player.
 	 * @param[in] args
 	 *   The arguments to the action.
+	 * @param[in] retainFocus
+	 *   true if the original window retains focus after the action, false otherwise.
 	 */
-	void SendAction(Action action, const QString &args=QString());
+	void SendAction(Action action, const QString &args=QString(), bool retainFocus=true);
 
 signals:
 

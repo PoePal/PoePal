@@ -289,6 +289,62 @@ public:
 	bool IsIncoming() const;
 
 	/**
+	 * Indicates whether or not the message is interpreted to be a trade request.
+	 * @return
+	 *   true if the message is a trade request, false otherwise.
+	 */
+	bool IsTradeRequest() const;
+
+	/**
+	 * Retrieves the name of the item being traded.
+	 * @return
+	 *   The name of the item being traded.
+	 */
+	QString GetTradeItem() const;
+
+	/**
+	 * Retrieves the amount of currency being traded.
+	 * @return
+	 *   The amount of currency to trade.
+	 */
+	float GetTradeAmount() const;
+
+	/**
+	 * Retrieves the currency being traded.
+	 * @return
+	 *   The trade abbreviation of the currency being traded.
+	 */
+	QString GetTradeCurrency() const;
+
+	/**
+	 * Retrieves the league in which the trade will occur.
+	 * @return
+	 *   The league in which the trade will occur.
+	 */
+	QString GetTradeLeague() const;
+
+	/**
+	 * Retrieves the tab containing the item being traded.
+	 * @return
+	 *   The name of the tab containing the item to trade.
+	 */
+	QString GetTradeTab() const;
+
+	/**
+	 * Retrieves the left position in the containing tab of the item being traded.
+	 * @return
+	 *   The left position of the item being trade in the tab containing it.
+	 */
+	int GetTradeLeftPosition() const;
+
+	/**
+	 * Retrieves the top position in the containing tab of the item being traded.
+	 * @return
+	 *   The top position of the item being trade in the tab containing it.
+	 */
+	int GetTradeTopPosition() const;
+
+	/**
 	 * Converts the message to a string.
 	 * @return
 	 *   The string representing the message.
@@ -346,6 +402,52 @@ private:
 	 * The guild of the subject of a chat message.
 	 */
 	QString _ChatSubjectGuild;
+
+	/**
+	 * Structure defining the extra trade request info.
+	 */
+	struct TradeReqInfo
+	{
+		/**
+		 * The item being traded for.
+		 */
+		QString _Item;
+
+		/**
+		 * The amount of currency being traded.
+		 */
+		float _Amount = 0.0;
+
+		/**
+		 * The currency type being traded.
+		 */
+		QString _Currency;
+
+		/**
+		 * The league where the trade will occur.
+		 */
+		QString _League;
+
+		/**
+		 * The tab containing the item to be traded.
+		 */
+		QString _Tab;
+
+		/**
+		 * The left position of the item in the tab.
+		 */
+		int _Left = 0;
+
+		/**
+		 * The top position of the item in the tab.
+		 */
+		int _Top = 0;
+	};
+
+	/**
+	 * The trade request details.
+	 */
+	QScopedPointer<TradeReqInfo> _TradeInfo;
 
 	/**
 	 * Indicates whether or not a chat message is incoming or outgoing.

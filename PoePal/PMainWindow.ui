@@ -84,6 +84,7 @@
    <addaction name="_HideoutAction"/>
    <addaction name="_MenagerieAction"/>
    <addaction name="_RemainingAction"/>
+   <addaction name="_DelveAction"/>
    <addaction name="_PassivesAction"/>
    <addaction name="_StatusAction"/>
   </widget>
@@ -363,6 +364,15 @@
    </property>
    <property name="toolTip">
     <string>Set Status</string>
+   </property>
+  </action>
+  <action name="_DelveAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/helmet_mine.png</normaloff>:/PoePal/Resources/32x32/helmet_mine.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delve</string>
    </property>
   </action>
  </widget>

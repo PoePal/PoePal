@@ -157,7 +157,7 @@ PMessageHandler::Action PMessageHandler::GetActionFromCommand(const QString &com
 }
 
 void PMessageHandler::SendChatMessage(PMessage::Channel channel, const QString &message, 
-	const QString &target /*= QString()*/)
+	const QString &target /*= QString()*/, bool retainFocus/*=true*/)
 {
 	auto thisWin = GetActiveWindow();
 	auto hwnd = FindWindow(NULL, L"Path of Exile");
@@ -256,17 +256,27 @@ void PMessageHandler::SendChatMessage(PMessage::Channel channel, const QString &
 	SendInput(1, &input, sizeof(INPUT));
 
 	AttachThreadInput(currThread, threadId, FALSE);
-	QTimer::singleShot(10, [thisWin]() {
-		SetFocus(thisWin);
-		SetForegroundWindow(thisWin);
-		SetActiveWindow(thisWin);
-	});
+	if (retainFocus)
+	{
+		QTimer::singleShot(10, [thisWin]() {
+			SetFocus(thisWin);
+			SetForegroundWindow(thisWin);
+			SetActiveWindow(thisWin);
+		});
+	}
 }
 
-void PMessageHandler::SendAction(Action action, const QString &args/*=QString()*/)
+void PMessageHandler::SendAction(Action action, const QString &args/*=QString()*/, bool retainFocus/*=true*/)
 {
-	if(args.isEmpty()) SendChatMessage(PMessage::Local, "/" + GetCommandFromAction(action));
-	else  SendChatMessage(PMessage::Local, "/" + GetCommandFromAction(action) + " " + args);
+	if (args.isEmpty())
+	{
+		SendChatMessage(PMessage::Local, "/" + GetCommandFromAction(action), QString(), retainFocus);
+	}
+	else
+	{
+		SendChatMessage(PMessage::Local, "/" + GetCommandFromAction(action) + " " + args, QString(), 
+			retainFocus);
+	}
 }
 
 void PMessageHandler::OnFileChanged()
