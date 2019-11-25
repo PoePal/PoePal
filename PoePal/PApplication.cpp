@@ -19,12 +19,41 @@
 #include <QQmlEngine>
 #include "PApplicationUpdate.h"
 #include "PChatWidget.h"
+#include "PGlobalKeyBind.h"
+#include "PGlobalKeyBindManager.h"
 #include "PMessage.h"
 #include "PMessageModel.h"
 #include "PMessageHandler.h"
+#include "PMainOptionsDlg.h"
 #include "PMainWindow.h"
 #include "POverlayBarWidget.h"
 #include "windows.h"
+
+#define HIDEOUT_KEY_BIND "hideout"
+#define MENAGERIE_KEY_BIND "menagerie"
+#define DELVE_KEY_BIND "delve"
+#define REMAINING_KEY_BIND "remaining"
+#define PASSIVES_KEY_BIND "passives"
+
+namespace {
+
+	/**
+	 * Handles a key bind that triggers a message.
+	 * @param[in] action
+	 *   The action to be sent.
+	 */
+	template<PMessageHandler::Action action>
+	void HandleChatKeyBind()
+	{
+		auto app = qobject_cast<PApplication*>(qApp);
+		Q_ASSERT(app);
+		if (!app) return;
+		auto handler = app->GetMessageHandler();
+		Q_ASSERT(handler);
+		if (!handler) return;
+		handler->SendAction(action);
+	}
+}
 
 QJSValue ChannelsToValue(PMessage::Channels channels)
 {
@@ -122,7 +151,24 @@ PApplication::~PApplication()
 
 void PApplication::Init()
 {
-	if (!_Manager) _Manager = new QNetworkAccessManager(this);
+	if (!_KeyBindMgr)
+	{
+		_KeyBindMgr.reset(new PGlobalKeyBindManager());
+		RegisterKeyBind(HIDEOUT_KEY_BIND, tr("Hideout"), tr("Travel to hideout"), "CTRL+SHIFT+H",
+			HandleChatKeyBind<PMessageHandler::Hideout>);
+		RegisterKeyBind(MENAGERIE_KEY_BIND, tr("Menagerie"), tr("Travel to menagerie"), "CTRL+SHIFT+M",
+			HandleChatKeyBind<PMessageHandler::Menagerie>);
+		RegisterKeyBind(DELVE_KEY_BIND, tr("Mine Encampment"), tr("Travel to the mine encampment"),
+			"CTRL+SHIFT+J", HandleChatKeyBind<PMessageHandler::Delve>);
+		RegisterKeyBind(REMAINING_KEY_BIND, tr("Remaining Monsters"),
+			tr("Show the monsters remaining in the area"), "CTRL+SHIFT+N",
+			HandleChatKeyBind<PMessageHandler::Remaining>);
+		RegisterKeyBind(PASSIVES_KEY_BIND, tr("View Passives"),
+			tr("Show the passive skills that have been acquired"), "CTRL+SHIFT+P",
+			HandleChatKeyBind<PMessageHandler::Passives>);
+		_KeyBindMgr->RestoreKeyBinds();
+	}
+	if (!_NetManager) _NetManager = new QNetworkAccessManager(this);
 	if (!_JSEngine)
 	{
 		_JSEngine = new QQmlEngine(this);
@@ -169,14 +215,21 @@ POverlayBarWidget* PApplication::GetOverlayBarWidget() const
 	return _OverlayBarWidget.data();
 }
 
-PChatSettings * PApplication::GetChatSettings() const
-{
-	return _ChatSettings;
-}
-
 QNetworkAccessManager * PApplication::GetNetworkManager() const
 {
-	return _Manager;
+	return _NetManager;
+}
+
+PGlobalKeyBindManager* PApplication::GetKeyBindManager() const
+{
+	return _KeyBindMgr.data();
+}
+
+void PApplication::ShowOptionsWindow()
+{
+	PMainOptionsDlg dlg(_MainWindow);
+	auto result = dlg.exec();
+	if (result == QDialog::Accepted) emit OptionsChanged();
 }
 
 void PApplication::OnCheckForegroundWindow()
@@ -195,4 +248,26 @@ void PApplication::OnCheckForegroundWindow()
 		_OverlayBarWidget->show();
 	}
 	if (_OverlayBarWidget) _OverlayBarWidget->setVisible(show);
+}
+
+void PApplication::OnBuiltInKeyBindTriggered()
+{
+	auto keyBind = qobject_cast<PGlobalKeyBind*>(sender());
+	Q_ASSERT(keyBind);
+	if (!keyBind) return;
+	auto func = _BuiltInKeyBindFuncs.value(keyBind->GetId(), nullptr);
+	Q_ASSERT(func);
+	if (!func) return;
+	func();
+}
+
+void PApplication::RegisterKeyBind(const QByteArray& id, const QString& label, const QString& toolTip, 
+	const QString& defaultKeySequence, const std::function<void()>& func)
+{
+	auto keyBind = _KeyBindMgr->RegisterBuiltInKeyBind(id, label, toolTip, defaultKeySequence);
+	Q_ASSERT(keyBind);
+	if (!keyBind) return;
+	_BuiltInKeyBinds.insert(id, keyBind);
+	_BuiltInKeyBindFuncs.insert(id, func);
+	connect(keyBind, &PGlobalKeyBind::Triggered, this, &PApplication::OnBuiltInKeyBindTriggered);
 }

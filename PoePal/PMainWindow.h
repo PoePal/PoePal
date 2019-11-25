@@ -33,7 +33,7 @@ class QToolButton;
 /**
  * Provides the main application window of the PoePal application.
  */
-class PMainWindow : public QMainWindow
+class PMainWindow : public QMainWindow, public Ui::PMainWindow
 {
 	Q_OBJECT
 
@@ -135,8 +135,12 @@ private slots:
 	 */
 	void OnMacroTriggered();
 
+	/**
+	 * Slot called when options change.
+	 */
+	void OnOptionsChanged();
+
 private:
-	Ui::PMainWindow ui;
 
 	/**
 	 * Retrieves the property for custom chat widgets.

@@ -28,6 +28,18 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="3rdParty">
+      <UniqueIdentifier>{88d4f314-2c5c-4e87-a706-31a642e9c4f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\UGlobalHotkey">
+      <UniqueIdentifier>{c8518cfc-7614-4613-8382-365286c58f20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\UGlobalHotkey\Header Files">
+      <UniqueIdentifier>{6f8feb98-5a65-466f-9bfe-4e1680486c08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\UGlobalHotkey\Source Files">
+      <UniqueIdentifier>{a1d40dd9-dc41-4c45-bd0b-9d63e9577079}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,9 +75,6 @@
     <ClCompile Include="PApplicationUpdate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PApplicationUpdateWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PMessageHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -91,6 +100,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PChatDockWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PMainOptionsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PApplicationUpdateWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\UGlobalHotkey\uexception.cpp">
+      <Filter>3rdParty\UGlobalHotkey\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\UGlobalHotkey\uglobalhotkeys.cpp">
+      <Filter>3rdParty\UGlobalHotkey\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\UGlobalHotkey\ukeysequence.cpp">
+      <Filter>3rdParty\UGlobalHotkey\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PGlobalKeyBind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PGlobalKeyBindManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PKeyBindEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -136,6 +169,9 @@
     <QtUic Include="POverlayBarWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="PMainOptionsDlg.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PMainWindow.h">
@@ -165,9 +201,6 @@
     <QtMoc Include="PChatWidgetsDlg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="PApplicationUpdateWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="PMessageHandler.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -195,6 +228,27 @@
     <QtMoc Include="PChatDockWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="PMainOptionsDlg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PApplicationUpdateWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\3rdParty\UGlobalHotkey\uglobalhotkeys.h">
+      <Filter>3rdParty\UGlobalHotkey\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\3rdParty\UGlobalHotkey\ukeysequence.h">
+      <Filter>3rdParty\UGlobalHotkey\Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PGlobalKeyBind.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PGlobalKeyBindManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PKeyBindEdit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -202,6 +256,15 @@
     </ClInclude>
     <ClInclude Include="PApplicationUpdate.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\UGlobalHotkey\hotkeymap.h">
+      <Filter>3rdParty\UGlobalHotkey\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\UGlobalHotkey\uexception.h">
+      <Filter>3rdParty\UGlobalHotkey\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\UGlobalHotkey\uglobal.h">
+      <Filter>3rdParty\UGlobalHotkey\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

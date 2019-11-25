@@ -21,6 +21,7 @@
 #include "PChatWidgetsDlg.h"
 #include "PJSConsoleWidget.h"
 #include "PLogWidget.h"
+#include "PMainOptionsDlg.h"
 #include "PMessageHandler.h"
 #include "PPassivesWindow.h"
 #include "PStatusWidget.h"
@@ -36,28 +37,31 @@
 PMainWindow::PMainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	setupUi(this);
+
+	auto app = qobject_cast<PApplication*>(qApp);
+	Q_ASSERT(app);
 
 	// Create the hard-coded dock widgets.
-	InitializeDockWidget(_LogWidget = new PLogWidget(this), Qt::BottomDockWidgetArea, ui._MessagesAction);
+	InitializeDockWidget(_LogWidget = new PLogWidget(this), Qt::BottomDockWidgetArea, _MessagesAction);
 	InitializeDockWidget(_JSConsole = new PJSConsoleWidget(this), Qt::BottomDockWidgetArea, 
-		ui._ConsoleAction);
-	InitializeDockWidget(_StatusWidget = new PStatusWidget(this), Qt::LeftDockWidgetArea, ui._StatusAction);
+		_ConsoleAction);
+	InitializeDockWidget(_StatusWidget = new PStatusWidget(this), Qt::LeftDockWidgetArea, _StatusAction);
 	QSettings settings;
 	settings.beginGroup(QStringLiteral("Chat"));
 	settings.beginGroup(QStringLiteral("DefaultWidgets"));
-	InitializeDefaultChatWidget(PMessage::Global, ui._GlobalAction, settings);
-	InitializeDefaultChatWidget(PMessage::Trade, ui._TradeAction, settings);
-	InitializeDefaultChatWidget(PMessage::Guild, ui._GuildAction, settings);
-	InitializeDefaultChatWidget(PMessage::Party, ui._PartyAction, settings);
-	InitializeDefaultChatWidget(PMessage::Local, ui._LocalAction, settings);
-	InitializeDefaultChatWidget(PMessage::Whisper, ui._WhisperAction, settings);
+	InitializeDefaultChatWidget(PMessage::Global, _GlobalAction, settings);
+	InitializeDefaultChatWidget(PMessage::Trade, _TradeAction, settings);
+	InitializeDefaultChatWidget(PMessage::Guild, _GuildAction, settings);
+	InitializeDefaultChatWidget(PMessage::Party, _PartyAction, settings);
+	InitializeDefaultChatWidget(PMessage::Local, _LocalAction, settings);
+	InitializeDefaultChatWidget(PMessage::Whisper, _WhisperAction, settings);
 	settings.endGroup(); // DefaultWidgets
 	// Restore the custom chat widgets.
-	_ChatDropDown = new QToolButton(ui._ChatToolbar);
+	_ChatDropDown = new QToolButton(_ChatToolbar);
 	_ChatDropDown->setPopupMode(QToolButton::DelayedPopup);
 	_ChatDropDown->setIcon(QIcon(":/PoePal/Resources/32x32/show_comment.png"));
-	auto chatEditAction = ui._ChatToolbar->addWidget(_ChatDropDown);
+	auto chatEditAction = _ChatToolbar->addWidget(_ChatDropDown);
 	settings.beginGroup(QStringLiteral("CustomWidgets"));
 	for (const auto &objName : settings.childGroups())
 	{
@@ -71,26 +75,31 @@ PMainWindow::PMainWindow(QWidget *parent)
 	settings.endGroup(); // CustomWidgets
 	settings.endGroup(); // Chat
 
-	ui._HideoutAction->setProperty("action", QVariant::fromValue(PMessageHandler::Hideout));
-	ui._MenagerieAction->setProperty("action", QVariant::fromValue(PMessageHandler::Menagerie));
-	ui._RemainingAction->setProperty("action", QVariant::fromValue(PMessageHandler::Remaining));
-	ui._PassivesAction->setProperty("action", QVariant::fromValue(PMessageHandler::Passives));
-	ui._DelveAction->setProperty("action", QVariant::fromValue(PMessageHandler::Delve));
+	_HideoutAction->setProperty("action", QVariant::fromValue(PMessageHandler::Hideout));
+	_MenagerieAction->setProperty("action", QVariant::fromValue(PMessageHandler::Menagerie));
+	_RemainingAction->setProperty("action", QVariant::fromValue(PMessageHandler::Remaining));
+	_PassivesAction->setProperty("action", QVariant::fromValue(PMessageHandler::Passives));
+	_DelveAction->setProperty("action", QVariant::fromValue(PMessageHandler::Delve));
 
-	connect(ui._HideoutAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
-	connect(ui._MenagerieAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
-	connect(ui._RemainingAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
-	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
-	connect(ui._DelveAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
-	connect(ui._PassivesAction, &QAction::triggered, this, &PMainWindow::ShowPassivesWindow);
+	connect(_HideoutAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(_MenagerieAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(_RemainingAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(_PassivesAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(_DelveAction, &QAction::triggered, this, &PMainWindow::OnMacroTriggered);
+	connect(_PassivesAction, &QAction::triggered, this, &PMainWindow::ShowPassivesWindow);
+
+	connect(_OptionsAction, &QAction::triggered, app, &PApplication::ShowOptionsWindow);
+	connect(app, &PApplication::OptionsChanged, this, &PMainWindow::OnOptionsChanged);
 
 	connect(_ChatDropDown, &QToolButton::clicked, this, &PMainWindow::ConfigureCustomChatWidgets);
-	connect(ui._UpdateAction, &QAction::triggered, this, &PMainWindow::CheckForUpdates);
+	connect(_UpdateAction, &QAction::triggered, this, &PMainWindow::CheckForUpdates);
 
 	QTimer::singleShot(1, this, &PMainWindow::CheckForUpdates);
 
 	restoreGeometry(settings.value(QStringLiteral("geometry")).toByteArray());
 	restoreState(settings.value(QStringLiteral("state")).toByteArray());
+
+	OnOptionsChanged();
 }
 
 PMainWindow::~PMainWindow()
@@ -158,7 +167,7 @@ void PMainWindow::Whisper(const QString &player)
 	auto widget = _DefaultChatWidgets.value(PMessage::Whisper, nullptr);
 	if (widget)
 	{
-		ui._WhisperAction->setChecked(true);
+		_WhisperAction->setChecked(true);
 		widget->raise();
 		widget->GetChatWidget()->SetWhisperTarget(player);
 	}
@@ -167,19 +176,19 @@ void PMainWindow::Whisper(const QString &player)
 void PMainWindow::ShowPassivesWindow()
 {
 	bool found = false;
-	for (const auto &window : ui._MDI->subWindowList())
+	for (const auto &window : _MDI->subWindowList())
 	{
 		auto passivesWindow = qobject_cast<PPassivesWindow *>(window);
 		if (!passivesWindow) continue;
-		ui._MDI->setActiveSubWindow(passivesWindow);
+		_MDI->setActiveSubWindow(passivesWindow);
 		passivesWindow->show();
 		found = true;
 		break;
 	}
 	if (!found)
 	{
-		auto newWin = new PPassivesWindow(ui._MDI);
-		ui._MDI->addSubWindow(newWin);
+		auto newWin = new PPassivesWindow(_MDI);
+		_MDI->addSubWindow(newWin);
 		newWin->show();
 	}
 }
@@ -263,6 +272,18 @@ void PMainWindow::OnMacroTriggered()
 	handler->SendAction(action->property("action").value<PMessageHandler::Action>());
 }
 
+void PMainWindow::OnOptionsChanged()
+{
+	QSettings settings;
+	settings.beginGroup(QStringLiteral("MainWindow"));
+	auto btnStyle = settings.value(QStringLiteral("ToolbarDisplayMode"), Qt::ToolButtonIconOnly)
+		.value<Qt::ToolButtonStyle>();
+	_ChatToolbar->setToolButtonStyle(btnStyle);
+	_MacroToolbar->setToolButtonStyle(btnStyle);
+	_SystemToolbar->setToolButtonStyle(btnStyle);
+	settings.endGroup(); // MainWindow
+}
+
 QQmlListProperty<PChatDockWidget> PMainWindow::GetCustomChatWidgetsProperty() const
 {
 	static QQmlListProperty<PChatDockWidget>::CountFunction countFunc = 
@@ -294,6 +315,7 @@ void PMainWindow::InitializeDefaultChatWidget(PMessage::Channel channel, QAction
 	QSettings &settings)
 {
 	auto widget = new PChatDockWidget(channel, this);
+	widget->setObjectName(PMessage::GetStringFromChannel(channel));
 	_DefaultChatWidgets.insert(channel, widget);
 	InitializeDockWidget(widget, Qt::LeftDockWidgetArea, action);
 	settings.beginGroup(PMessage::GetStringFromChannel(channel));

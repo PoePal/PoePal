@@ -90,7 +90,7 @@
   </widget>
   <widget class="QToolBar" name="_SystemToolbar">
    <property name="windowTitle">
-    <string>Debug Toolbar</string>
+    <string>System Toolbar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -98,6 +98,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="_OptionsAction"/>
    <addaction name="_MessagesAction"/>
    <addaction name="_ConsoleAction"/>
    <addaction name="_UpdateAction"/>
@@ -373,6 +374,18 @@
    </property>
    <property name="text">
     <string>Delve</string>
+   </property>
+  </action>
+  <action name="_OptionsAction">
+   <property name="icon">
+    <iconset resource="PoePal.qrc">
+     <normaloff>:/PoePal/Resources/32x32/cog.png</normaloff>:/PoePal/Resources/32x32/cog.png</iconset>
+   </property>
+   <property name="text">
+    <string>Options</string>
+   </property>
+   <property name="toolTip">
+    <string>Access options for PoePal</string>
    </property>
   </action>
  </widget>

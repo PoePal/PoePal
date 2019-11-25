@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/PoePal">
+    <file>Resources/32x32/delete.png</file>
     <file>Resources/32x32/lock_open.png</file>
     <file>Resources/32x32/lock.png</file>
     <file>Resources/32x32/cog.png</file>

@@ -20,7 +20,8 @@
 #include <QPointer>
 #include <QTimer>
 
-class PChatSettings;
+class PGlobalKeyBind;
+class PGlobalKeyBindManager;
 class PMessageModel;
 class PMessageHandler;
 class PMainWindow;
@@ -48,12 +49,13 @@ class PApplication : public QApplication
 	/**
 	 * The main window of the application.
 	 */
-	Q_PROPERTY(PMainWindow *mainWindow READ GetMainWindow)
+	Q_PROPERTY(PMainWindow* mainWindow READ GetMainWindow);
 
 	/**
-	 * The chat settings.
+	 * The macro manager for the application.
 	 */
-	Q_PROPERTY(PChatSettings *chatSettings READ GetChatSettings)
+	Q_PROPERTY(PGlobalKeyBindManager* macroManager READ GetKeyBindManager);
+
 public:
 
 	/**
@@ -107,18 +109,25 @@ public:
 	POverlayBarWidget * GetOverlayBarWidget() const;
 
 	/**
-	 * Retrieves the chat settings.
-	 * @return
-	 *   The chat settings.
-	 */
-	PChatSettings * GetChatSettings() const;
-
-	/**
 	 * Retrieves the network access manager.
 	 * @return
 	 *   The network access manager.
 	 */
 	QNetworkAccessManager * GetNetworkManager() const;
+
+	/**
+	 * Retrieves the key bind manager for the application.
+	 * @return
+	 *   The key bind manager.
+	 */
+	PGlobalKeyBindManager* GetKeyBindManager() const;
+
+public slots:
+
+	/**
+	 * Shows the main options dialog.
+	 */
+	void ShowOptionsWindow();
 
 signals:
 
@@ -129,6 +138,11 @@ signals:
 	 */
 	void UpdateCheckFinished(bool isUpdate);
 
+	/**
+	 * Signal sent when options have been changed.
+	 */
+	void OptionsChanged();
+
 private slots:
 
 	/**
@@ -136,7 +150,28 @@ private slots:
 	 */
 	void OnCheckForegroundWindow();
 
+	/**
+	 * Slot called when one of the built-in global key binds is triggered.
+	 */
+	void OnBuiltInKeyBindTriggered();
+
 private:
+
+	/**
+	 * Registers a new global key bind.
+	 * @param[in] id
+	 *   The ID of the global key bind to register.
+	 * @param[in] label
+	 *   The label for the key bind.
+	 * @param[in] toolTip
+	 *   The tool tip that describes the key bind.
+	 * @param[in] defaultKeySequence
+	 *   The default key sequence for the global key bind.
+	 * @param[in] func
+	 *   The function to be called when the key bind is triggered.
+	 */
+	void RegisterKeyBind(const QByteArray &id, const QString &label, const QString &toolTip, 
+		const QString &defaultKeySequence, const std::function<void()>& func);
 
 	/**
 	 * The message handler.
@@ -159,14 +194,14 @@ private:
 	QPointer<PMainWindow> _MainWindow;
 
 	/**
-	 * The chat settings.
-	 */
-	PChatSettings *_ChatSettings = nullptr;
-
-	/**
 	 * The network access manager.
 	 */
-	QNetworkAccessManager *_Manager = nullptr;
+	QNetworkAccessManager *_NetManager = nullptr;
+
+	/**
+	 * The macro manager.
+	 */
+	QScopedPointer<PGlobalKeyBindManager> _KeyBindMgr;
 
 	/**
 	 * Timer to check the foreground window.
@@ -177,4 +212,14 @@ private:
 	 * The overlay bar widget.
 	 */
 	QPointer<POverlayBarWidget> _OverlayBarWidget;
+
+	/**
+	 * The hash of all built-in key binds that have been registered.
+	 */
+	QHash<QByteArray, PGlobalKeyBind*> _BuiltInKeyBinds;
+
+	/**
+	 * The functions associated to each built-in key bind.
+	 */
+	QHash<QByteArray, std::function<void()>> _BuiltInKeyBindFuncs;
 };
