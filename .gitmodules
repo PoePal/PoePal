@@ -1,0 +1,3 @@
+[submodule "3rdParty/UGlobalHotkey"]
+	path = 3rdParty/UGlobalHotkey
+	url = https://github.com/falceeffect/UGlobalHotkey.git
