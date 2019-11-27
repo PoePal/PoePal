@@ -127,6 +127,7 @@ void PVerticalTabBar::removeTab(int index)
 {
 	auto item = _List->takeItem(index);
 	if (item) delete item;
+	UpdateMinimumSize();
 }
 
 void PVerticalTabBar::setTabData(int index, const QVariant& data)
