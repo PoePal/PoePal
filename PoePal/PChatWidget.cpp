@@ -91,6 +91,10 @@ public:
 			{
 				QStyleOptionTab opt(*tab);
 				opt.shape = QTabBar::RoundedNorth;
+				auto parent = widget->parentWidget();
+				auto parentHint = parent->sizeHint();
+				auto hint = widget->sizeHint();
+				opt.rect.setRight(opt.rect.left() + hint.width());
 				QProxyStyle::drawControl(element, &opt, painter, widget);
 				return;
 			}
@@ -245,7 +249,7 @@ void PChatWidget::OnNewMessage(PMessage *message)
 	}
 	else
 	{
-		int numTabs = _WhisperTabs->tabBar()->count();
+		int numTabs = _WhisperTabs->count();
 		int idx = -1;
 		for (int t = 0; t < numTabs; ++t)
 		{
@@ -267,6 +271,7 @@ void PChatWidget::OnNewMessage(PMessage *message)
 		{
 			auto textEdit = new QPlainTextEdit(_WhisperTabs);
 			textEdit->setReadOnly(true);
+			textEdit->setFrameStyle(QFrame::NoFrame);
 			_WhisperTabs->insertTab(0, textEdit, message->GetSubject());
 			if (numTabs > 0 && message->IsIncoming())
 			{
@@ -279,7 +284,8 @@ void PChatWidget::OnNewMessage(PMessage *message)
 		}
 		if (message->GetSubtype() != PMessage::Chat)
 		{
-			if (message->GetContents() != tr("That character is not online.")) return;
+			if (message->GetContents() != tr("That character is not online.") &&
+				message->GetContents() != tr("The specified character does not exist.")) return;
 		}
 		auto edit = qobject_cast<QPlainTextEdit *>(_WhisperTabs->widget(0));
 		Q_ASSERT(edit);
@@ -307,6 +313,7 @@ void PChatWidget::OnTabSelected()
 {
 	int sel = _WhisperTabs->tabBar()->currentIndex();
 	_WhisperTabs->tabBar()->setTabTextColor(sel, Qt::black);
+	_WhisperTabs->setCurrentIndex(sel);
 	// Change the target of the whisper to the current tab.
 	auto text = _EntryEdit->toPlainText().trimmed();
 	// Get rid of the '@'
@@ -360,14 +367,6 @@ void PChatWidget::OnContextMenuTriggered(QAction *action)
 		Q_ASSERT(mainWin);
 		mainWin->Whisper(message->GetSubject());
 	}
-}
-
-void PChatWidget::OnTabClosed(int idx)
-{
-	auto widget = _WhisperTabs->widget(idx);
-	_WhisperTabs->removeTab(idx);
-	widget->deleteLater();
-	if (_WhisperTabs->count() == 0) deleteLater();
 }
 
 bool PChatWidget::CheckMessage(PMessage *message)
@@ -434,9 +433,10 @@ void PChatWidget::Initialize()
 	}
 	Q_ASSERT(app);
 	_WhisperTabs->tabBar()->setStyle(new PHorizontalTabStyle());
+	_WhisperTabs->setTabsClosable(true);
 	connect(_EntryEdit, &QPlainTextEdit::textChanged, this, &PChatWidget::OnEntryChanged);
 	connect(_DisplayEdit, &QWidget::customContextMenuRequested, this, &PChatWidget::OnContextMenuRequested);
-	connect(_WhisperTabs->tabBar(), &QTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
+	connect(_WhisperTabs->tabBar(), &PVerticalTabBar::currentChanged, this, &PChatWidget::OnTabSelected);
 	_EntryEdit->installEventFilter(this);
 	PrependMessages();
 	auto scanner = app->GetMessageHandler();
@@ -458,7 +458,7 @@ void PChatWidget::Initialize()
 	connect(_ContextMenu, &QMenu::triggered, this, &PChatWidget::OnContextMenuTriggered);
 	connect(_DisplayEdit, &QPlainTextEdit::copyAvailable, _CopyAction, &QAction::setEnabled);
 	connect(_CopyAction, &QAction::triggered, _DisplayEdit, &QPlainTextEdit::copy);
-	connect(_WhisperTabs, &QTabWidget::tabCloseRequested, this, &PChatWidget::OnTabClosed);
+	connect(_SendBtn, &QPushButton::clicked, this, &PChatWidget::Submit);
 	UpdateForChannels();
 }
 

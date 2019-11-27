@@ -159,13 +159,6 @@ private slots:
 	 */
 	void OnContextMenuTriggered(QAction *action);
 
-	/**
-	 * Slot called when a tab is closed.
-	 * @param[in] idx
-	 *   The index of the tab that was closed.
-	 */
-	void OnTabClosed(int idx);
-
 private:
 
 	/**

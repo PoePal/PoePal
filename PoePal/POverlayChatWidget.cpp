@@ -24,9 +24,6 @@ PChatWidget(PMessage::Whisper, parent)
 {
 	setWindowFlags(windowFlags() | Qt::Window | Qt::Tool | Qt::WindowStaysOnTopHint);
 
-	_WhisperTabs->setTabPosition(QTabWidget::North);
-	_WhisperTabs->setTabsClosable(true);
-
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 }
 

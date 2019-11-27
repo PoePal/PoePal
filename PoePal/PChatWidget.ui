@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>339</width>
-    <height>299</height>
+    <width>368</width>
+    <height>292</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,14 +43,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTabWidget" name="_WhisperTabs">
-     <property name="tabPosition">
-      <enum>QTabWidget::West</enum>
-     </property>
-     <property name="tabsClosable">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <widget class="PVerticalTabWidget" name="_WhisperTabs" native="true"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="_BottomLayout">
@@ -110,6 +103,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PVerticalTabWidget</class>
+   <extends>QWidget</extends>
+   <header>PVerticalTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="PoePal.qrc"/>
  </resources>
