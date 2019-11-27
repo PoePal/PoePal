@@ -26,7 +26,7 @@ if(-not $msBuildPath -or -not (Test-Path $msBuildPath))
     if(Test-Path $vsWherePath)
     {
         $msBuildPath = (&"$vsWherePath" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)
-        $msBuildPath += "\MSBuild\15.0\Bin\MSBuild.exe"
+        $msBuildPath += "\MSBuild\Current\Bin\MSBuild.exe"
     }
 }
 if(-not (Test-Path $msBuildPath))
@@ -37,9 +37,8 @@ if(-not (Test-Path $msBuildPath))
     Exit 1
 }
 
-# Collect the GitHub username and password from the user.
-$username = Read-Host "GitHub Username: "
-$password = Read-Host "GitHub Password: "
+# Collect the GitHub API token from the user.
+$token = Read-Host "GitHub API Token: "
 
 # Figure out what version we want to bump, (major, minor, version)
 $bumpVer = Read-Host "Which version do you want to bump, 0-major, 1-minor, 2-patch? [2]"
@@ -75,13 +74,19 @@ if(-not (Test-Path $qtDir))
     Exit 1
 }
 $installerDir = "$PSScriptRoot\..\installer";
-foreach($line in Get-Content "$installerDir\config\qtbinaries.txt")
+foreach($line in Get-Content "$installerDir\config\qtfiles.txt")
 {
-    Copy-Item "$qtDir\bin\$line" "$installerDir\packages\com.PoePal.PoePal\data"
+	$path = "$installerDir\packages\com.PoePal.PoePal\data\$line"
+	$dir = Split-Path $path
+	if(-not (Test-Path $dir))
+	{
+		New-Item $dir -ItemType "directory" | Out-Null
+	}
+    Copy-Item "$qtDir\$line" "$path"
 }
 foreach($line in Get-Content "$installerDir\config\poepalbinaries.txt")
 {
-    Copy-Item "$PSScriptRoot\..\x64\Release\$line" "$installerDir\packages\com.PoePal.PoePal\data"
+    Copy-Item "$PSScriptRoot\..\x64\Release\$line" "$installerDir\packages\com.PoePal.PoePal\data\bin"
 }
 
 # Replace the date and version in the installer configuration files and release notes.
@@ -91,7 +96,7 @@ foreach($line in Get-Content "$installerDir\config\poepalbinaries.txt")
 
 # Build the installer binary package.
 Write-Host("### Building installer");
-&"$qtToolsDir\QtInstallerFramework\3.0\bin\binarycreator.exe" -c installer\config\config.xml -p installer\packages "PoePal-v$newVer.exe"
+&"$qtToolsDir\QtInstallerFramework\3.1\bin\binarycreator.exe" -c installer\config\config.xml -p installer\packages "PoePal-v$newVer.exe"
 
 # Read the git comments since the last release and find all issues mentioned.
 $gitCommits = &"git" log "v$version..HEAD" --decorate --pretty=%s%n%b
@@ -130,13 +135,12 @@ if($response -ne "y" -and $response)
 {
     Exit 0
 }
-$base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $username,$password)))
 Write-Host("### Creating release on GitHub");
-$result = Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -Method POST -Uri "https://api.github.com/repos/PoePal/PoePal/releases" -Body $json -ContentType 'application/json'
+$result = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri "https://api.github.com/repos/PoePal/PoePal/releases" -Body $json -ContentType 'application/json'
 Write-Host("### Uploading installer");
 $uploadUrl = $result.upload_url.split('{')[0] + "?name=PoePal-v$newVer.exe"
-$uploadRes = Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -Method POST -Uri $uploadUrl -ContentType 'application/vnd.microsoft.portable-executable' -Infile "PoePal-v$newVer.exe"
+$uploadRes = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri $uploadUrl -ContentType 'application/vnd.microsoft.portable-executable' -Infile "PoePal-v$newVer.exe"
 $release.draft = $false
 $json = $release | ConvertTo-Json
-$result = Invoke-RestMethod -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} -Method POST -Uri $result.url -Body $json -ContentType 'application/json'
+$result = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri $result.url -Body $json -ContentType 'application/json'
 Start-Process -FilePath $result.html_url

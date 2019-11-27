@@ -1,0 +1,16 @@
+bin\Qt5Core.dll
+bin\Qt5Gui.dll
+bin\Qt5Network.dll
+bin\Qt5Positioning.dll
+bin\Qt5PrintSupport.dll
+bin\Qt5Qml.dll
+bin\Qt5Quick.dll
+bin\Qt5QuickWidgets.dll
+bin\Qt5WebChannel.dll
+bin\Qt5WebEngineWidgets.dll
+bin\Qt5Widgets.dll
+bin\Qt5WebEngineCore.dll
+bin\QtWebEngineProcess.exe
+bin\qt.conf
+plugins\platforms\qwindows.dll
+plugins\styles\qwindowsvistastyle.dll
