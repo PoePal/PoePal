@@ -1,3 +1,6 @@
 [submodule "3rdParty/UGlobalHotkey"]
 	path = 3rdParty/UGlobalHotkey
 	url = https://github.com/falceeffect/UGlobalHotkey.git
+[submodule "3rdParty/rcedit"]
+	path = 3rdParty/rcedit
+	url = https://github.com/electron/rcedit.git
