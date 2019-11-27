@@ -269,9 +269,12 @@ void PChatWidget::OnNewMessage(PMessage *message)
 		}
 		else
 		{
-			auto textEdit = new QPlainTextEdit(_WhisperTabs);
+			auto textEdit = new QPlainTextEdit(_WhisperTabs); 
 			textEdit->setReadOnly(true);
 			textEdit->setFrameStyle(QFrame::NoFrame);
+			textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
+			connect(textEdit, &QPlainTextEdit::customContextMenuRequested, this,
+				&PChatWidget::OnContextMenuRequested);
 			_WhisperTabs->insertTab(0, textEdit, message->GetSubject());
 			if (numTabs > 0 && message->IsIncoming())
 			{
@@ -340,7 +343,12 @@ void PChatWidget::OnContextMenuRequested(const QPoint &pos)
 	_ContextMenu->popup(_DisplayEdit->mapToGlobal(pos));
 	auto cursor = _DisplayEdit->cursorForPosition(pos);
 	auto userData = static_cast<PTextBlockMessageData *>(cursor.block().userData());
-	if (userData) _ContextMenu->setProperty("msg", QVariant::fromValue(userData->GetLogMessage()));
+	if (userData) _ContextMenu->setProperty("subject", userData->GetLogMessage()->GetSubject());
+	else if (sender() != _DisplayEdit)
+	{
+		int idx = _WhisperTabs->indexOf(qobject_cast<QWidget *>(sender()));
+		_ContextMenu->setProperty("subject", _WhisperTabs->tabText(idx));
+	}
 	else
 	{
 		_ContextMenu->setDisabled(true);
@@ -350,22 +358,21 @@ void PChatWidget::OnContextMenuRequested(const QPoint &pos)
 
 void PChatWidget::OnContextMenuTriggered(QAction *action)
 {
-	auto message = _ContextMenu->property("msg").value<PMessage *>();
+	auto subject = _ContextMenu->property("subject").toString();
 	auto app = qobject_cast<PApplication *>(qApp);
 	Q_ASSERT(app);
 	auto handler = app->GetMessageHandler();
 	Q_ASSERT(handler);
 	auto actionVar = action->property("action");
-	if (!message) return;
-	else if (!actionVar.isNull())
+	if (!actionVar.isNull())
 	{
-		handler->SendAction(actionVar.value<PMessageHandler::Action>(), message->GetSubject());
+		handler->SendAction(actionVar.value<PMessageHandler::Action>(), subject);
 	}
 	else if (action == _WhisperAction)
 	{
 		auto mainWin = app->GetMainWindow();
 		Q_ASSERT(mainWin);
-		mainWin->Whisper(message->GetSubject());
+		mainWin->Whisper(subject);
 	}
 }
 
