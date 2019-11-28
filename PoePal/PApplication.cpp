@@ -241,7 +241,7 @@ void PApplication::OnCheckForegroundWindow()
 	auto len = GetWindowTextW(windowHwnd, title, 32);
 	bool show = false;
 	std::wstring titleStr(title);
-	show = (titleStr == L"Path of Exile" || titleStr == L"PoePal Overlay - PoePal" || true);
+	show = (titleStr == L"Path of Exile" || titleStr == L"PoePal Overlay - PoePal");
 	if (show && !_OverlayBarWidget)
 	{
 		_OverlayBarWidget = new POverlayBarWidget();

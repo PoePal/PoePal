@@ -104,6 +104,11 @@ private slots:
 private:
 
 	/**
+	 * Updates the visibility of the overlay chat window.
+	 */
+	void UpdateChatWindowVisibility();
+
+	/**
 	 * Indicates whether or not the widget is locked.
 	 * true if the widget is locked, false otherwise.
 	 */

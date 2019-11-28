@@ -73,6 +73,7 @@ void POverlayBarWidget::Lock()
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	_LockAction->setVisible(false);
 	_UnlockAction->setVisible(true);
+	UpdateChatWindowVisibility();
 }
 
 void POverlayBarWidget::Unlock()
@@ -90,6 +91,7 @@ void POverlayBarWidget::Unlock()
 		origWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	_LockAction->setVisible(true);
 	_UnlockAction->setVisible(false);
+	UpdateChatWindowVisibility();
 }
 
 void POverlayBarWidget::SetLocked(bool locked)
@@ -135,7 +137,15 @@ void POverlayBarWidget::OnButtonClicked()
 	else if (button == _MenagerieBtn) handler->SendAction(PMessageHandler::Menagerie, QString(), false);
 	else if (button == _DelveBtn) handler->SendAction(PMessageHandler::Delve, QString(), false);
 	else if (button == _OptionsBtn) _ConfigMenu.popup(QCursor::pos());
-	else if (button == _ChatBtn)
+	else if (button == _ChatBtn) UpdateChatWindowVisibility();
+}
+
+void POverlayBarWidget::UpdateChatWindowVisibility()
+{
+	// Determine whether we should show it. We want to show it if the overlay is unlocked or the chat button
+	// is toggled on.
+	bool show = !IsLocked() || _ChatBtn->isChecked();
+	if (show)
 	{
 		if (!_ChatWidget)
 		{
@@ -143,13 +153,10 @@ void POverlayBarWidget::OnButtonClicked()
 			_ChatWidget->setStyleSheet(styleSheet());
 			_ChatWidget->lower();
 		}
-		if (_ChatBtn->isChecked())
-		{
-			_ChatWidget->setVisible(true);
-			_ChatWidget->SetLocked(_Locked);
-			setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-			raise();
-		}
-		else _ChatWidget->setVisible(false);
+		_ChatWidget->setVisible(true);
+		_ChatWidget->SetLocked(_Locked);
+		setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+		raise();
 	}
+	else if(_ChatWidget) _ChatWidget->setVisible(false);
 }
