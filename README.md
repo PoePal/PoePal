@@ -1,16 +1,18 @@
 # PoePal
 
-![PoePal](https://raw.githubusercontent.com/PoePal/PoePal/master/PoePal/Resources/logo.png)PoePal is a 
-companion application for [Path of Exile](https://www.pathofexile.com) that provides some functionality to
+![PoePal](https://raw.githubusercontent.com/PoePal/PoePal/master/PoePal/Resources/logo.png)
+
+PoePal is a companion application for [Path of Exile](https://www.pathofexile.com) that provides some functionality to
 make playing the game more enjoyable, keeping things off your game if you have multiple monitors.
 
 ## Install
 
-So far this has only been released on Windows. Download the latest release **[here](https://github.com/PoePal/PoePal/releases/latest)** and run the installer
-executable. The install process should be self explanatory.
+- Download [Latest Version](https://github.com/PoePal/PoePal/releases/latest/download/PoePal-setup.exe)
+- Run the downloaded *PoePal-setup.exe*
+- The install process should be self explanatory.
 
-**Note:** These installers are not signed, so there will potentially be a warning by Microsoft Smart Scan 
-until enough people download it. Please double-check the hashes if you're concerned.
+**Note:** This is only available on Windows. Also, these installers are not signed, so there will potentially be a 
+warning by Microsoft Smart Scan until enough people download it. Please double-check the hashes if you're concerned.
 
 ## More Info
 This application was initially designed for players that have a secondary monitor to provide a dashboard of
