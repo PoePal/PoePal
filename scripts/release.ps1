@@ -94,9 +94,14 @@ foreach($line in Get-Content "$installerDir\config\poepalbinaries.txt")
 (Get-Content "$installerDir\packages\com.PoePal.PoePal\meta\package.template.xml").Replace("0.0.0-0", "$newVer-1").Replace("0000-00-00", (Get-Date -UFormat "%Y-%m-%d")) | Set-Content "$installerDir\packages\com.PoePal.PoePal\meta\package.xml"
 (Get-Content "$installerDir\ReleaseNotesTemplate.txt").Replace("0.0.0", $newVer) | Set-Content("$installerDir\ReleaseNotes.txt")
 
+# Fix the version numbering on the installer binary package.
+$rceditExe = "$PSScriptRoot\..\Default\rcedit.exe"
+Copy-Item "installer\installerbase.exe" "installer\installerbase-fixed.exe"
+&"$rceditExe" "installer\installerbase-fixed.exe" --set-file-version "$newVer" --set-product-version "$newVer"
+
 # Build the installer binary package.
 Write-Host("### Building installer");
-&"$qtToolsDir\QtInstallerFramework\3.1\bin\binarycreator.exe" -c installer\config\config.xml -p installer\packages "PoePal-v$newVer.exe"
+&"$qtToolsDir\QtInstallerFramework\3.1\bin\binarycreator.exe" -t installer\installerbase-fixed.exe -c installer\config\config.xml -p installer\packages "PoePal-setup.exe" -r installer\PoePal-setup.rc
 
 # Read the git comments since the last release and find all issues mentioned.
 $gitCommits = &"git" log "v$version..HEAD" --decorate --pretty=%s%n%b
@@ -138,8 +143,8 @@ if($response -ne "y" -and $response)
 Write-Host("### Creating release on GitHub");
 $result = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri "https://api.github.com/repos/PoePal/PoePal/releases" -Body $json -ContentType 'application/json'
 Write-Host("### Uploading installer");
-$uploadUrl = $result.upload_url.split('{')[0] + "?name=PoePal-v$newVer.exe"
-$uploadRes = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri $uploadUrl -ContentType 'application/vnd.microsoft.portable-executable' -Infile "PoePal-v$newVer.exe"
+$uploadUrl = $result.upload_url.split('{')[0] + "?name=PoePal-setup.exe"
+$uploadRes = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri $uploadUrl -ContentType 'application/vnd.microsoft.portable-executable' -Infile "PoePal-setup.exe"
 $release.draft = $false
 $json = $release | ConvertTo-Json
 $result = Invoke-RestMethod -Headers @{Authorization=("token {0}" -f $token)} -Method POST -Uri $result.url -Body $json -ContentType 'application/json'

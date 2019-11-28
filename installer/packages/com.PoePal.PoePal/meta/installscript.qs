@@ -43,8 +43,8 @@ Component.prototype.createOperations = function()
         // call the base create operations function
         component.createOperations();
 		
-        component.addOperation("CreateShortcut", "@TargetDir@/PoePal.exe", "@UserStartMenuProgramsPath@/PoePal.lnk",
-            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/PoePal.exe",
+        component.addOperation("CreateShortcut", "@TargetDir@/bin/PoePal.exe", "@UserStartMenuProgramsPath@/PoePal.lnk",
+            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/bin/PoePal.exe",
             "iconId=0", "description=Run PoePal");
 		
 		
@@ -60,8 +60,7 @@ Component.prototype.installationFinished = function()
             var isReadMeCheckBoxChecked = component.userInterface( "StartAfterForm" ).startAfterCheck.checked;
             if (isReadMeCheckBoxChecked) 
 			{
-				var path = installer.findPath("PoePal.exe", installer.value("TargetDir"));
-				installer.executeDetached(path);
+				installer.executeDetached(installer.value("TargetDir")+"/bin/PoePal.exe");
             }
         }
     } catch(e) {

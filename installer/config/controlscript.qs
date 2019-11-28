@@ -21,13 +21,6 @@ function Controller()
 		installer.setDefaultPageVisible(QInstaller.ComponentSelection,0);
 		installer.setDefaultPageVisible(QInstaller.TargetDirectory, 0);
 		installer.setDefaultPageVisible(QInstaller.StartMenuSelection, 0);
-		var path = installer.findPath("uninstall.exe", installer.value("TargetDir"));
-		if(installer.fileExists(path))
-		{
-			QMessageBox.question("uninstallrequired", "Uninstall Required",
-				"The previously installed version must be uninstalled first.", QMessageBox.Ok);
-			installer.execute(path);
-		}
 	}
 	if(installer.isUninstaller())
 	{
@@ -40,7 +33,7 @@ function Controller()
 Controller.prototype.IntroductionPageCallback = function()
 {
 	var path = installer.findPath("uninstall.exe", installer.value("TargetDir"));
-	if(installer.fileExists(path))
+	if(installer.fileExists(path) && !installer.isUninstaller())
 	{
 		QMessageBox.question("uninstallrequired", "Uninstall Required",
 			"The previously installed version must be uninstalled first.", QMessageBox.Ok);
