@@ -17,8 +17,8 @@
 #include "PApplication.h"
 #include "PMessageHandler.h"
 #include "POverlayChatWidget.h"
-#include <QDebug>
 #include <QPropertyAnimation>
+#include <QSettings>
 #include "windows.h"
 
 POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
@@ -39,6 +39,10 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 	_UnlockAction = _ConfigMenu.addAction(unlockIcon, tr("Unlock"));
 	_UnlockAction->setVisible(false);
 
+	_ChatWidget = new POverlayChatWidget();
+	_ChatWidget->setStyleSheet(styleSheet());
+	_ChatWidget->lower();
+
 	connect(_HideoutBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
 	connect(_MenagerieBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
 	connect(_DelveBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
@@ -55,6 +59,36 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 	connect(&_ForegroundWindowTimer, &QTimer::timeout, this, &POverlayBarWidget::OnCheckForegroundWindow);
 	_ForegroundWindowTimer.setInterval(100);
 	_ForegroundWindowTimer.start();
+
+	QSettings settings;
+	settings.beginGroup(QStringLiteral("Overlay"));
+	settings.beginGroup(QStringLiteral("BarWidget"));
+	if (settings.contains(QStringLiteral("Geometry")))
+	{
+		restoreGeometry(settings.value(QStringLiteral("Geometry")).toByteArray());
+	}
+	_ChatBtn->setChecked(settings.value(QStringLiteral("ChatVisible"), false).toBool());
+	if (settings.value(QStringLiteral("Locked")).toBool()) SetLocked(true);
+	settings.endGroup(); // BarWidget
+	settings.beginGroup(QStringLiteral("ChatWidget"));
+	_ChatWidget->restoreGeometry(settings.value(QStringLiteral("Geometry")).toByteArray());
+	settings.endGroup(); // ChatWidget
+	settings.endGroup(); // Overlay
+}
+
+POverlayBarWidget::~POverlayBarWidget()
+{
+	QSettings settings;
+	settings.beginGroup(QStringLiteral("Overlay"));
+	settings.beginGroup(QStringLiteral("BarWidget"));
+	settings.setValue(QStringLiteral("Geometry"), saveGeometry());
+	settings.setValue(QStringLiteral("ChatVisible"), _ChatBtn->isChecked());
+	settings.setValue(QStringLiteral("Locked"), IsLocked());
+	settings.endGroup(); // BarWidget
+	settings.beginGroup(QStringLiteral("ChatWidget"));
+	settings.setValue(QStringLiteral("Geometry"), _ChatWidget->saveGeometry());
+	settings.endGroup(); // ChatWidget
+	settings.endGroup(); // Overlay
 }
 
 bool POverlayBarWidget::IsLocked() const
@@ -174,12 +208,6 @@ void POverlayBarWidget::UpdateChatWindowVisibility()
 	bool show = (!IsLocked() || _ChatBtn->isChecked()) && _GameActive;
 	if (show)
 	{
-		if (!_ChatWidget)
-		{
-			_ChatWidget = new POverlayChatWidget();
-			_ChatWidget->setStyleSheet(styleSheet());
-			_ChatWidget->lower();
-		}
 		_ChatWidget->setVisible(true);
 		_ChatWidget->SetLocked(_Locked);
 		setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);

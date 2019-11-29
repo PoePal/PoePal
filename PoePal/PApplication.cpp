@@ -140,7 +140,6 @@ PApplication::PApplication(int &argc, char **argv) :
 	setApplicationName("PoePal");
 	setOrganizationName("PoePal");
 	setApplicationVersion(GetProductVersion());
-	_OverlayBarWidget = new POverlayBarWidget();
 }
 
 PApplication::~PApplication()
@@ -178,6 +177,11 @@ void PApplication::Init()
 	{
 		_MainWindow = new PMainWindow();
 		_MainWindow->show();
+	}
+	if (!_OverlayBarWidget)
+	{
+		_OverlayBarWidget = new POverlayBarWidget();
+		connect(this, &QApplication::aboutToQuit, _OverlayBarWidget, &QObject::deleteLater);
 	}
 	qRegisterMetaType<PMessage::Channel>("PLogMessage::Channel");
 	qRegisterMetaType<PMessage::Channels>("PLogMessage::Channels");

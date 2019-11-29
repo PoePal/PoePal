@@ -50,7 +50,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~POverlayBarWidget() = default;
+	virtual ~POverlayBarWidget();
 
 	/**
 	 * Indicates whether or not the widget is locked.
