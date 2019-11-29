@@ -17,6 +17,7 @@
 
 #include <QMenu>
 #include <QPointer>
+#include <QTimer>
 #include <QWidget>
 #include "ui_POverlayBarWidget.h"
 
@@ -101,6 +102,11 @@ private slots:
 	 */
 	void OnButtonClicked();
 
+	/**
+	 * Slot called when the timer is triggered to check the foreground window.
+	 */
+	void OnCheckForegroundWindow();
+
 private:
 
 	/**
@@ -143,4 +149,14 @@ private:
 	 * The overlay trade widget.
 	 */
 	QPointer<POverlayTradeWidget> _TradeWidget;
+
+	/**
+	 * Timer to check the foreground window.
+	 */
+	QTimer _ForegroundWindowTimer;
+	
+	/**
+	 * Indicates whether or not the game is active.
+	 */
+	bool _GameActive = false;
 };

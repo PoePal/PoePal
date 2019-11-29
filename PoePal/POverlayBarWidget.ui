@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>107</width>
+    <width>106</width>
     <height>28</height>
    </rect>
   </property>
@@ -28,12 +28,21 @@
 	background: rgb(50,50,50);
 	color: white;
 }
-QPushButton {
+QPushButton,
+QToolButton {
 	padding: 1px;
 	border: 1px solid rgb(125,100,70);
 }
-QPushButton:hover {
+QPushButton:hover,
+QToolButton:hover {
 	background: rgb(80, 80, 80);
+}
+QToolButton::menu-arrow {
+	width: 0px;
+	image: url(none.jpg);
+}
+QToolButton::menu-button {
+	background: transparent;
 }
 QPushButton:pressed, QPushButton:checked {
 	background: rgb(120, 120, 120);
@@ -78,7 +87,7 @@ QPlainTextEdit {
     <number>0</number>
    </property>
    <item>
-    <widget class="QPushButton" name="_OptionsBtn">
+    <widget class="QToolButton" name="_OptionsBtn">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -98,7 +107,10 @@ QPlainTextEdit {
        <height>24</height>
       </size>
      </property>
-     <property name="flat">
+     <property name="popupMode">
+      <enum>QToolButton::MenuButtonPopup</enum>
+     </property>
+     <property name="autoRaise">
       <bool>true</bool>
      </property>
     </widget>

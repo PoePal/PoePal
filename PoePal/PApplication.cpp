@@ -140,9 +140,7 @@ PApplication::PApplication(int &argc, char **argv) :
 	setApplicationName("PoePal");
 	setOrganizationName("PoePal");
 	setApplicationVersion(GetProductVersion());
-	connect(&_ForegroundWindowTimer, &QTimer::timeout, this, &PApplication::OnCheckForegroundWindow);
-	_ForegroundWindowTimer.setInterval(100);
-	if(qgetenv("POEPAL_ENABLE_OVERLAY").toInt() != 0)_ForegroundWindowTimer.start();
+	_OverlayBarWidget = new POverlayBarWidget();
 }
 
 PApplication::~PApplication()
@@ -230,24 +228,6 @@ void PApplication::ShowOptionsWindow()
 	PMainOptionsDlg dlg(_MainWindow);
 	auto result = dlg.exec();
 	if (result == QDialog::Accepted) emit OptionsChanged();
-}
-
-void PApplication::OnCheckForegroundWindow()
-{
-	auto windowHwnd = GetForegroundWindow();
-	if (!windowHwnd) return;
-	WCHAR title[33];
-	title[32] = '\0]';
-	auto len = GetWindowTextW(windowHwnd, title, 32);
-	bool show = false;
-	std::wstring titleStr(title);
-	show = (titleStr == L"Path of Exile" || titleStr == L"PoePal Overlay - PoePal");
-	if (show && !_OverlayBarWidget)
-	{
-		_OverlayBarWidget = new POverlayBarWidget();
-		_OverlayBarWidget->show();
-	}
-	if (_OverlayBarWidget) _OverlayBarWidget->setVisible(show);
 }
 
 void PApplication::OnBuiltInKeyBindTriggered()

@@ -17,7 +17,9 @@
 #include "PApplication.h"
 #include "PMessageHandler.h"
 #include "POverlayChatWidget.h"
+#include <QDebug>
 #include <QPropertyAnimation>
+#include "windows.h"
 
 POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 	QWidget(parent)
@@ -42,12 +44,17 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 	connect(_DelveBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
 	connect(_ChatBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
 	connect(_TradeBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
-	connect(_OptionsBtn, &QPushButton::clicked, this, &POverlayBarWidget::OnButtonClicked);
+	connect(_OptionsBtn, &QPushButton::clicked, _OptionsBtn, &QToolButton::showMenu);
 	connect(_LockAction, &QAction::triggered, this, &POverlayBarWidget::Lock);
 	connect(_UnlockAction, &QAction::triggered, this, &POverlayBarWidget::Unlock);
+	_OptionsBtn->setMenu(&_ConfigMenu);
 
 	_CollapseAnimation = new QPropertyAnimation(this, "size");
 	_CollapseAnimation->setDuration(100);
+
+	connect(&_ForegroundWindowTimer, &QTimer::timeout, this, &POverlayBarWidget::OnCheckForegroundWindow);
+	_ForegroundWindowTimer.setInterval(100);
+	_ForegroundWindowTimer.start();
 }
 
 bool POverlayBarWidget::IsLocked() const
@@ -126,7 +133,7 @@ void POverlayBarWidget::leaveEvent(QEvent* evt)
 
 void POverlayBarWidget::OnButtonClicked()
 {
-	auto button = qobject_cast<QPushButton*>(sender());
+	auto button = qobject_cast<QAbstractButton*>(sender());
 	Q_ASSERT(button);
 	if (!button) return;
 	auto app = qobject_cast<PApplication*>(qApp);
@@ -140,11 +147,31 @@ void POverlayBarWidget::OnButtonClicked()
 	else if (button == _ChatBtn) UpdateChatWindowVisibility();
 }
 
+void POverlayBarWidget::OnCheckForegroundWindow()
+{
+	auto windowHwnd = GetForegroundWindow();
+	if (!windowHwnd) return;
+	WCHAR title[33];
+	title[32] = '\0]';
+	auto len = GetWindowTextW(windowHwnd, title, 32);
+	bool show = false;
+	auto titleStr = QString::fromStdWString(title);
+	titleStr.remove(" - PoePal");
+	bool oldActive = _GameActive;
+	_GameActive = titleStr == L"Path of Exile" || titleStr == windowTitle() ||
+		(_ChatWidget && titleStr == _ChatWidget->windowTitle());
+	if (oldActive != _GameActive)
+	{
+		setVisible(_GameActive);
+		UpdateChatWindowVisibility();
+	}
+}
+
 void POverlayBarWidget::UpdateChatWindowVisibility()
 {
 	// Determine whether we should show it. We want to show it if the overlay is unlocked or the chat button
 	// is toggled on.
-	bool show = !IsLocked() || _ChatBtn->isChecked();
+	bool show = (!IsLocked() || _ChatBtn->isChecked()) && _GameActive;
 	if (show)
 	{
 		if (!_ChatWidget)

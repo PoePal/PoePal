@@ -18,7 +18,6 @@
 #include <QApplication>
 #include <PApplicationUpdate.h>
 #include <QPointer>
-#include <QTimer>
 
 class PGlobalKeyBind;
 class PGlobalKeyBindManager;
@@ -146,11 +145,6 @@ signals:
 private slots:
 
 	/**
-	 * Slot called when the timer is triggered to check the foreground window.
-	 */
-	void OnCheckForegroundWindow();
-
-	/**
 	 * Slot called when one of the built-in global key binds is triggered.
 	 */
 	void OnBuiltInKeyBindTriggered();
@@ -202,11 +196,6 @@ private:
 	 * The macro manager.
 	 */
 	QScopedPointer<PGlobalKeyBindManager> _KeyBindMgr;
-
-	/**
-	 * Timer to check the foreground window.
-	 */
-	QTimer _ForegroundWindowTimer;
 
 	/**
 	 * The overlay bar widget.
