@@ -111,8 +111,6 @@ void POverlayBarWidget::Lock()
 	auto newCornerPos = geometry().topLeft();
 	auto newWindowPos = pos();
 	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
-		newWindowPos.y() + origCornerPos.y() - newCornerPos.y() + newWindowPos.y() - origWindowPos.y());
-	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	_LockAction->setVisible(false);
 	_UnlockAction->setVisible(true);

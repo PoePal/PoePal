@@ -45,8 +45,6 @@ void POverlayChatWidget::Lock()
 	auto newCornerPos = geometry().topLeft();
 	auto newWindowPos = pos();
 	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
-		newWindowPos.y() + origCornerPos.y() - newCornerPos.y() + newWindowPos.y() - origWindowPos.y());
-	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	// Remove the event filter so arrows are no longer captured.
 	for (const auto& child : findChildren<QWidget*>()) child->removeEventFilter(this);
