@@ -24,7 +24,7 @@ class PGlobalKeyBindManager;
 class PMessageModel;
 class PMessageHandler;
 class PMainWindow;
-class POverlayBarWidget;
+class POverlayController;
 class QJSEngine;
 class QNetworkAccessManager;
 
@@ -101,11 +101,11 @@ public:
 	PMainWindow * GetMainWindow() const;
 
 	/**
-	 * Retrieves the overlay bar widget.
+	 * Retrieves the overlay controller.
 	 * @return
-	 *   The overlay bar widget.
+	 *   The overlay controller.
 	 */
-	POverlayBarWidget * GetOverlayBarWidget() const;
+	POverlayController * GetOverlayController() const;
 
 	/**
 	 * Retrieves the network access manager.
@@ -198,9 +198,9 @@ private:
 	QScopedPointer<PGlobalKeyBindManager> _KeyBindMgr;
 
 	/**
-	 * The overlay bar widget.
+	 * The overlay controller.
 	 */
-	QPointer<POverlayBarWidget> _OverlayBarWidget;
+	QPointer<POverlayController> _OverlayController;
 
 	/**
 	 * The hash of all built-in key binds that have been registered.

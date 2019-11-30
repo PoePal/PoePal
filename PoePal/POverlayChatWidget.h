@@ -41,6 +41,11 @@ public:
 	POverlayChatWidget(QWidget* parent = nullptr);
 
 	/**
+	 * Destructor saves the settings for this widget.
+	 */
+	virtual ~POverlayChatWidget();
+
+	/**
 	 * Indicates whether or not the widget is locked.
 	 * @return
 	 *   true if the widget is locked, false otherwise.
@@ -77,11 +82,6 @@ protected:
 	 * Overrides PChatWidget#ShouldRetainFocus.
 	 */
 	virtual bool ShouldRetainFocus() const override;
-
-	/**
-	 * Overrides PChatWidget#focusInEvent.
-	 */
-	virtual void focusInEvent(QFocusEvent* event) override;
 
 	/**
 	 * Overrides QObject#eventFilter.

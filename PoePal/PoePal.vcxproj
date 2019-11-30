@@ -139,6 +139,7 @@ if not exist $(OutDir)libssl-1_1-x64.dll powershell -Command "Start-Process cmd 
     <ClCompile Include="PChatDockWidget.cpp" />
     <ClCompile Include="PChatOptionsDlg.cpp" />
     <ClCompile Include="PChatOptionsWidget.cpp" />
+    <ClCompile Include="POverlayController.cpp" />
     <ClCompile Include="PVerticalTabBar.cpp" />
     <ClCompile Include="PVerticalTabBarWidget.cpp" />
     <ClCompile Include="PChatWidget.cpp" />
@@ -326,6 +327,10 @@ if not exist $(OutDir)libssl-1_1-x64.dll powershell -Command "Start-Process cmd 
     <QtMoc Include="PVerticalTabBar.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;$(SolutionDir)3rdParty\UGlobalHotkey;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
+    </QtMoc>
+    <QtMoc Include="POverlayController.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;$(SolutionDir)3rdParty\UGlobalHotkey;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;$(SolutionDir)3rdParty\UGlobalHotkey;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtNetwork;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtQml;$(QTDIR)\include\QtWebEngineWidgets;$(QTDIR)\include\QtWebEngineCore;$(QTDIR)\include\QtWebChannel</IncludePath>
     </QtMoc>
     <ClInclude Include="resource.h" />
   </ItemGroup>

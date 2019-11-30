@@ -26,7 +26,7 @@
 #include "PMessageHandler.h"
 #include "PMainOptionsDlg.h"
 #include "PMainWindow.h"
-#include "POverlayBarWidget.h"
+#include "POverlayController.h"
 #include "windows.h"
 
 #define HIDEOUT_KEY_BIND "hideout"
@@ -178,10 +178,10 @@ void PApplication::Init()
 		_MainWindow = new PMainWindow();
 		_MainWindow->show();
 	}
-	if (!_OverlayBarWidget)
+	if (!_OverlayController)
 	{
-		_OverlayBarWidget = new POverlayBarWidget();
-		connect(this, &QApplication::aboutToQuit, _OverlayBarWidget, &QObject::deleteLater);
+		_OverlayController = new POverlayController(this);
+		_OverlayController->Initialize();
 	}
 	qRegisterMetaType<PMessage::Channel>("PLogMessage::Channel");
 	qRegisterMetaType<PMessage::Channels>("PLogMessage::Channels");
@@ -212,9 +212,9 @@ PMainWindow * PApplication::GetMainWindow() const
 	return _MainWindow;
 }
 
-POverlayBarWidget* PApplication::GetOverlayBarWidget() const
+POverlayController* PApplication::GetOverlayController() const
 {
-	return _OverlayBarWidget.data();
+	return _OverlayController.data();
 }
 
 QNetworkAccessManager * PApplication::GetNetworkManager() const

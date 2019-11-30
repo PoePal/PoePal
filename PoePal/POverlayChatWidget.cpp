@@ -16,7 +16,9 @@
 #include "POverlayChatWidget.h"
 #include "PApplication.h"
 #include "POverlayBarWidget.h"
+#include "POverlayController.h"
 #include <QLabel>
+#include <QSettings>
 #include <QTimer>
 
 POverlayChatWidget::POverlayChatWidget(QWidget* parent /*= nullptr*/):
@@ -25,6 +27,27 @@ PChatWidget(PMessage::Whisper, parent)
 	setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
 
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+
+	// Restore the chat widget settings.
+	QSettings settings;
+	settings.beginGroup(QStringLiteral("Overlay"));
+	settings.beginGroup(QStringLiteral("ChatWidget"));
+	if (settings.contains(QStringLiteral("Geometry")))
+	{
+		restoreGeometry(settings.value(QStringLiteral("Geometry")).toByteArray());
+	}
+	settings.endGroup(); // ChatWidget
+	settings.endGroup(); // Overlay
+}
+
+POverlayChatWidget::~POverlayChatWidget()
+{
+	QSettings settings;
+	settings.beginGroup(QStringLiteral("Overlay"));
+	settings.beginGroup(QStringLiteral("ChatWidget"));
+	settings.setValue(QStringLiteral("Geometry"), saveGeometry());
+	settings.endGroup(); // ChatWidget
+	settings.endGroup(); // Overlay
 }
 
 bool POverlayChatWidget::IsLocked() const
@@ -82,14 +105,6 @@ void POverlayChatWidget::ToggleLock()
 bool POverlayChatWidget::ShouldRetainFocus() const
 {
 	return false;
-}
-
-void POverlayChatWidget::focusInEvent(QFocusEvent* event)
-{
-	PChatWidget::focusInEvent(event);
-	auto app = qobject_cast<PApplication*>(qApp);
-	Q_ASSERT(app);
-	app->GetOverlayBarWidget()->raise();
 }
 
 bool POverlayChatWidget::eventFilter(QObject* watched, QEvent* event)

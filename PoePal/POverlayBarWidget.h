@@ -32,12 +32,6 @@ class POverlayBarWidget : public QWidget, public Ui::POverlayBarWidget
 {
 	Q_OBJECT;
 
-	/**
-	 * Indicates whether the widget is locked.
-	 * This is true if the widget is locked and false otherwise.
-	 */
-	Q_PROPERTY(bool locked READ IsLocked WRITE SetLocked)
-
 public: 
 
 	/**
@@ -52,37 +46,6 @@ public:
 	 */
 	virtual ~POverlayBarWidget();
 
-	/**
-	 * Indicates whether or not the widget is locked.
-	 * @return
-	 *   true if the widget is locked, false otherwise.
-	 */
-	bool IsLocked() const;
-
-public slots:
-
-	/**
-	 * Locks the overlay widget.
-	 */
-	void Lock();
-
-	/**
-	 * Unlocks the overlay widget.
-	 */
-	void Unlock();
-
-	/**
-	 * Sets the lock state of the overlay widget.
-	 * @param[in] locked
-	 *   true if the widget is to be locked, false if it is to be unlocked.
-	 */
-	void SetLocked(bool locked);
-
-	/**
-	 * Toggles the lock state of the overlay widget.
-	 */
-	void ToggleLock();
-
 protected:
 
 	/**
@@ -95,16 +58,6 @@ protected:
 	 */
 	virtual void leaveEvent(QEvent* evt) override;
 
-	/**
-	 * Overrides QWidget#keyPressEvent
-	 */
-	virtual void keyPressEvent(QKeyEvent* event) override;
-
-	/**
-	 * Overrides QObject#eventFilter.
-	 */
-	virtual bool eventFilter(QObject* watched, QEvent* event) override;
-
 private slots:
 
 	/**
@@ -112,23 +65,7 @@ private slots:
 	 */
 	void OnButtonClicked();
 
-	/**
-	 * Slot called when the timer is triggered to check the foreground window.
-	 */
-	void OnCheckForegroundWindow();
-
 private:
-
-	/**
-	 * Updates the visibility of the overlay chat window.
-	 */
-	void UpdateChatWindowVisibility();
-
-	/**
-	 * Indicates whether or not the widget is locked.
-	 * true if the widget is locked, false otherwise.
-	 */
-	bool _Locked = false;
 
 	/**
 	 * The animation for the collapsible frame width.
@@ -149,29 +86,4 @@ private:
 	 * The action that unlocks the positions of all of the widgets.
 	 */
 	QPointer<QAction> _UnlockAction;
-
-	/**
-	 * The overlay chat widget.
-	 */
-	QPointer<POverlayChatWidget> _ChatWidget;
-
-	/**
-	 * The overlay trade widget.
-	 */
-	QPointer<POverlayTradeWidget> _TradeWidget;
-
-	/**
-	 * Timer to check the foreground window.
-	 */
-	QTimer _ForegroundWindowTimer;
-	
-	/**
-	 * Indicates whether or not the game is active.
-	 */
-	bool _GameActive = false;
-
-	/**
-	 * Indicates whether the window was locked at the start.
-	 */
-	bool _LockedAtStart = false;
 };
