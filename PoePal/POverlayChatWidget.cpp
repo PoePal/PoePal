@@ -22,7 +22,7 @@
 POverlayChatWidget::POverlayChatWidget(QWidget* parent /*= nullptr*/):
 PChatWidget(PMessage::Whisper, parent)
 {
-	setWindowFlags(windowFlags() | Qt::Window | Qt::Tool | Qt::WindowStaysOnTopHint);
+	setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
 
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 }
@@ -48,6 +48,8 @@ void POverlayChatWidget::Lock()
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y() + newWindowPos.y() - origWindowPos.y());
 	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
+	// Remove the event filter so arrows are no longer captured.
+	for (const auto& child : findChildren<QWidget*>()) child->removeEventFilter(this);
 }
 
 void POverlayChatWidget::Unlock()
@@ -60,10 +62,12 @@ void POverlayChatWidget::Unlock()
 	if(visible) hide();
 	setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
 	if(visible) show();
-	auto newWindowPos = pos();
 	auto newCornerPos = geometry().topLeft();
 	move(origWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
 		origWindowPos.y() + origCornerPos.y() - newCornerPos.y());
+	// Install an event filter on all of the child widgets. We'll use this to be able to move the widget 
+	// around with keys.
+	for (const auto& child : findChildren<QWidget*>()) child->installEventFilter(this);
 }
 
 void POverlayChatWidget::SetLocked(bool locked)
@@ -88,4 +92,36 @@ void POverlayChatWidget::focusInEvent(QFocusEvent* event)
 	auto app = qobject_cast<PApplication*>(qApp);
 	Q_ASSERT(app);
 	app->GetOverlayBarWidget()->raise();
+}
+
+bool POverlayChatWidget::eventFilter(QObject* watched, QEvent* event)
+{
+	if (event->type() != QEvent::KeyPress) return false;
+	auto keyPressEvent = static_cast<QKeyEvent*>(event);
+	auto newPos = pos();
+	bool arrowKey = true;
+	switch (keyPressEvent->key())
+	{
+	case Qt::Key_Up:
+		newPos.setY(newPos.y() - 1);
+		break;
+	case Qt::Key_Right:
+		newPos.setX(newPos.x() + 1);
+		break;
+	case Qt::Key_Down:
+		newPos.setY(newPos.y() + 1);
+		break;
+	case Qt::Key_Left:
+		newPos.setX(newPos.x() - 1);
+		break;
+	default:
+		arrowKey = false;
+		break;
+	}
+	if (arrowKey)
+	{
+		move(newPos);
+		return true;
+	}
+	return false;
 }

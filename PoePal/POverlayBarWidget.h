@@ -95,6 +95,16 @@ protected:
 	 */
 	virtual void leaveEvent(QEvent* evt) override;
 
+	/**
+	 * Overrides QWidget#keyPressEvent
+	 */
+	virtual void keyPressEvent(QKeyEvent* event) override;
+
+	/**
+	 * Overrides QObject#eventFilter.
+	 */
+	virtual bool eventFilter(QObject* watched, QEvent* event) override;
+
 private slots:
 
 	/**
@@ -159,4 +169,9 @@ private:
 	 * Indicates whether or not the game is active.
 	 */
 	bool _GameActive = false;
+
+	/**
+	 * Indicates whether the window was locked at the start.
+	 */
+	bool _LockedAtStart = false;
 };

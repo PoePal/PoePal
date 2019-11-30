@@ -83,6 +83,11 @@ protected:
 	 */
 	virtual void focusInEvent(QFocusEvent* event) override;
 
+	/**
+	 * Overrides QObject#eventFilter.
+	 */
+	virtual bool eventFilter(QObject* watched, QEvent* event) override;
+
 private:
 
 	/**

@@ -26,7 +26,7 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 {
 	setupUi(this);
 	
-	setWindowFlags(windowFlags() | Qt::Window | Qt::Tool | Qt::WindowStaysOnTopHint);
+	setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 
 	QIcon lockIcon;
@@ -68,7 +68,9 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 		restoreGeometry(settings.value(QStringLiteral("Geometry")).toByteArray());
 	}
 	_ChatBtn->setChecked(settings.value(QStringLiteral("ChatVisible"), false).toBool());
-	if (settings.value(QStringLiteral("Locked")).toBool()) SetLocked(true);
+	_LockedAtStart = settings.value(QStringLiteral("Locked")).toBool();
+// 	if (_LockedAtStart) Lock();
+	for (const auto& child : findChildren<QWidget*>()) child->installEventFilter(this);
 	settings.endGroup(); // BarWidget
 	settings.beginGroup(QStringLiteral("ChatWidget"));
 	_ChatWidget->restoreGeometry(settings.value(QStringLiteral("Geometry")).toByteArray());
@@ -114,6 +116,8 @@ void POverlayBarWidget::Lock()
 		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	_LockAction->setVisible(false);
 	_UnlockAction->setVisible(true);
+	// Remove the event filter.
+	for (const auto& child : findChildren<QWidget*>()) child->removeEventFilter(this);
 	UpdateChatWindowVisibility();
 }
 
@@ -121,7 +125,6 @@ void POverlayBarWidget::Unlock()
 {
 	if (!_Locked) return;
 	_Locked = false;
-	if (_ChatWidget) _ChatWidget->Unlock();
 	auto origCornerPos = geometry().topLeft();
 	auto origWindowPos = pos();
 	hide();
@@ -132,6 +135,9 @@ void POverlayBarWidget::Unlock()
 		origWindowPos.y() + origCornerPos.y() - newCornerPos.y());
 	_LockAction->setVisible(true);
 	_UnlockAction->setVisible(false);
+	// Install an event filter on all of the child widgets. We'll use this to be able to move the widget 
+	// around with keys.
+	for (const auto& child : findChildren<QWidget*>()) child->installEventFilter(this);
 	UpdateChatWindowVisibility();
 }
 
@@ -163,6 +169,61 @@ void POverlayBarWidget::leaveEvent(QEvent* evt)
 	_CollapseAnimation->setStartValue(size());
 	_CollapseAnimation->setEndValue(fullSize);
 	_CollapseAnimation->start();
+}
+
+void POverlayBarWidget::keyPressEvent(QKeyEvent* event)
+{
+	auto newPos = pos();
+	auto key = event->key();
+	switch (event->key())
+	{
+	case Qt::Key_Up:
+		newPos.setY(newPos.y() - 1);
+		break;
+	case Qt::Key_Right:
+		newPos.setX(newPos.x() + 1);
+		break;
+	case Qt::Key_Down:
+		newPos.setY(newPos.y() + 1);
+		break;
+	case Qt::Key_Left:
+		newPos.setX(newPos.x() - 1);
+		break;
+	}
+	move(newPos);
+	QWidget::keyPressEvent(event);
+}
+
+bool POverlayBarWidget::eventFilter(QObject* watched, QEvent* event)
+{
+	if (event->type() != QEvent::KeyPress) return false;
+	auto keyPressEvent = static_cast<QKeyEvent*>(event);
+	auto newPos = pos();
+	bool arrowKey = true;
+	switch (keyPressEvent->key())
+	{
+	case Qt::Key_Up:
+		newPos.setY(newPos.y() - 1);
+		break;
+	case Qt::Key_Right:
+		newPos.setX(newPos.x() + 1);
+		break;
+	case Qt::Key_Down:
+		newPos.setY(newPos.y() + 1);
+		break;
+	case Qt::Key_Left:
+		newPos.setX(newPos.x() - 1);
+		break;
+	default:
+		arrowKey = false;
+		break;
+	}
+	if (arrowKey)
+	{
+		move(newPos);
+		return true;
+	}
+	return false;
 }
 
 void POverlayBarWidget::OnButtonClicked()
@@ -197,6 +258,11 @@ void POverlayBarWidget::OnCheckForegroundWindow()
 	if (oldActive != _GameActive)
 	{
 		setVisible(_GameActive);
+		if (_GameActive && _LockedAtStart)
+		{
+			QTimer::singleShot(10, this, &POverlayBarWidget::Lock);
+			_LockedAtStart = false;
+		}
 		UpdateChatWindowVisibility();
 	}
 }
@@ -209,7 +275,11 @@ void POverlayBarWidget::UpdateChatWindowVisibility()
 	if (show)
 	{
 		_ChatWidget->setVisible(true);
-		_ChatWidget->SetLocked(_Locked);
+		if (_ChatWidget->IsLocked() != _Locked)
+		{
+			if (_Locked) QTimer::singleShot(10, _ChatWidget, &POverlayChatWidget::Lock);
+			else QTimer::singleShot(10, _ChatWidget, &POverlayChatWidget::Unlock);
+		}
 		setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
 		raise();
 	}
