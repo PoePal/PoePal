@@ -25,12 +25,6 @@ class POverlayChatWidget : public PChatWidget
 {
 	Q_OBJECT;
 
-	/**
-	 * Indicates whether the widget is locked.
-	 * This is true if the widget is locked and false otherwise.
-	 */
-	Q_PROPERTY(bool locked READ IsLocked WRITE SetLocked)
-
 public:
 
 	/**
@@ -45,54 +39,10 @@ public:
 	 */
 	virtual ~POverlayChatWidget();
 
-	/**
-	 * Indicates whether or not the widget is locked.
-	 * @return
-	 *   true if the widget is locked, false otherwise.
-	 */
-	bool IsLocked() const;
-
-public slots:
-
-	/**
-	 * Locks the overlay widget.
-	 */
-	void Lock();
-
-	/**
-	 * Unlocks the overlay widget.
-	 */
-	void Unlock();
-
-	/**
-	 * Sets the lock state of the overlay widget.
-	 * @param[in] locked
-	 *   true if the widget is to be locked, false if it is to be unlocked.
-	 */
-	void SetLocked(bool locked);
-
-	/**
-	 * Toggles the lock state of the overlay widget.
-	 */
-	void ToggleLock();
-
 protected:
 
 	/**
 	 * Overrides PChatWidget#ShouldRetainFocus.
 	 */
 	virtual bool ShouldRetainFocus() const override;
-
-	/**
-	 * Overrides QObject#eventFilter.
-	 */
-	virtual bool eventFilter(QObject* watched, QEvent* event) override;
-
-private:
-
-	/**
-	 * Indicates whether or not the widget is locked.
-	 * true if the widget is locked, false otherwise.
-	 */
-	bool _Locked = false;
 };

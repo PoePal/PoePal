@@ -54,6 +54,13 @@ public:
 	PVerticalTabBar(QWidget* parent = nullptr);
 
 	/**
+	 * Retrieves the list widget containing the tabs.
+	 * @return
+	 *   The list widget containing the tabs.
+	 */
+	QListWidget* GetListWidget() const;
+
+	/**
 	 * Adds a tab to the tab bar.
 	 * @param[in] text
 	 *   The text to put on the tab.

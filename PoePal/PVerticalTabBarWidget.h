@@ -15,13 +15,13 @@
  */
 #pragma once
 
-#include <QWidget>
+#include <QFrame>
 #include "ui_PChatTabWidget.h"
 
 /**
  * Class provides the control for chat whisper tabs.
  */
-class PVerticalTabBarWidget : public QWidget, public Ui::PChatTabWidget
+class PVerticalTabBarWidget : public QFrame, public Ui::PChatTabWidget
 {
 	Q_OBJECT;
 

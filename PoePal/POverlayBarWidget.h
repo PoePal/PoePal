@@ -86,4 +86,9 @@ private:
 	 * The action that unlocks the positions of all of the widgets.
 	 */
 	QPointer<QAction> _UnlockAction;
+
+	/**
+	 * The action that handles closing the application.
+	 */
+	QPointer<QAction> _ExitAction;
 };

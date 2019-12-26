@@ -21,7 +21,7 @@
 namespace {
 	static QString _ListStylesheet(
 		"QListWidget {"
-		"		background: transparent;"
+		"	background: transparent;"
 		"	border-right: 1px solid gray;"
 		"}"
 
@@ -48,7 +48,7 @@ PVerticalTabBar::PVerticalTabBar(QWidget* parent /*= nullptr*/):
 QWidget(parent)
 {
 	_List = new QListWidget(this);
-	_List->setStyleSheet(_ListStylesheet);
+	setStyleSheet(_ListStylesheet);
 	_List->setFrameShape(QFrame::NoFrame);
 	_List->setFocusPolicy(Qt::NoFocus);
 	_List->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -63,6 +63,11 @@ QWidget(parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 	connect(_List, &QListWidget::currentRowChanged, this, &PVerticalTabBar::currentChanged);
+}
+
+QListWidget* PVerticalTabBar::GetListWidget() const
+{
+	return _List;
 }
 
 int PVerticalTabBar::addTab(const QString& text)

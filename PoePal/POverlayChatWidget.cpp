@@ -17,8 +17,11 @@
 #include "PApplication.h"
 #include "POverlayBarWidget.h"
 #include "POverlayController.h"
+#include <QDebug>
 #include <QLabel>
+#include <QListWidget>
 #include <QSettings>
+#include <QScrollBar>
 #include <QTimer>
 
 POverlayChatWidget::POverlayChatWidget(QWidget* parent /*= nullptr*/):
@@ -27,6 +30,16 @@ PChatWidget(PMessage::Whisper, parent)
 	setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
 
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+	auto app = qobject_cast<PApplication*>(qApp);
+	auto controller = app->GetOverlayController();
+
+	// Fix the tab bar widget border on the right.
+	auto tabBar = _WhisperTabs->tabBar();
+	tabBar->setStyleSheet(controller->GetStyleSheet());
+	tabBar->GetListWidget()->verticalScrollBar()->setStyleSheet(controller->GetStyleSheet());
+
+	// Get the style sheet and apply it here.
+	setStyleSheet(controller->GetStyleSheet());
 
 	// Restore the chat widget settings.
 	QSettings settings;
@@ -38,6 +51,8 @@ PChatWidget(PMessage::Whisper, parent)
 	}
 	settings.endGroup(); // ChatWidget
 	settings.endGroup(); // Overlay
+
+
 }
 
 POverlayChatWidget::~POverlayChatWidget()
@@ -50,91 +65,7 @@ POverlayChatWidget::~POverlayChatWidget()
 	settings.endGroup(); // Overlay
 }
 
-bool POverlayChatWidget::IsLocked() const
-{
-	return _Locked;
-}
-
-void POverlayChatWidget::Lock()
-{
-	if (_Locked) return;
-	_Locked = true;
-	auto origCornerPos = geometry().topLeft();
-	auto origWindowPos = pos();
-	bool visible = isVisible();
-	if (visible) hide();
-	setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-	if (visible) show();
-	auto newCornerPos = geometry().topLeft();
-	auto newWindowPos = pos();
-	move(newWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
-		newWindowPos.y() + origCornerPos.y() - newCornerPos.y());
-	// Remove the event filter so arrows are no longer captured.
-	for (const auto& child : findChildren<QWidget*>()) child->removeEventFilter(this);
-}
-
-void POverlayChatWidget::Unlock()
-{
-	if (!_Locked) return;
-	_Locked = false;
-	auto origCornerPos = geometry().topLeft();
-	auto origWindowPos = pos();
-	bool visible = isVisible();
-	if(visible) hide();
-	setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
-	if(visible) show();
-	auto newCornerPos = geometry().topLeft();
-	move(origWindowPos.x() + origCornerPos.x() - newCornerPos.x(),
-		origWindowPos.y() + origCornerPos.y() - newCornerPos.y());
-	// Install an event filter on all of the child widgets. We'll use this to be able to move the widget 
-	// around with keys.
-	for (const auto& child : findChildren<QWidget*>()) child->installEventFilter(this);
-}
-
-void POverlayChatWidget::SetLocked(bool locked)
-{
-	if (locked) Lock();
-	else Unlock();
-}
-
-void POverlayChatWidget::ToggleLock()
-{
-	SetLocked(!_Locked);
-}
-
 bool POverlayChatWidget::ShouldRetainFocus() const
 {
-	return false;
-}
-
-bool POverlayChatWidget::eventFilter(QObject* watched, QEvent* event)
-{
-	if (event->type() != QEvent::KeyPress) return false;
-	auto keyPressEvent = static_cast<QKeyEvent*>(event);
-	auto newPos = pos();
-	bool arrowKey = true;
-	switch (keyPressEvent->key())
-	{
-	case Qt::Key_Up:
-		newPos.setY(newPos.y() - 1);
-		break;
-	case Qt::Key_Right:
-		newPos.setX(newPos.x() + 1);
-		break;
-	case Qt::Key_Down:
-		newPos.setY(newPos.y() + 1);
-		break;
-	case Qt::Key_Left:
-		newPos.setX(newPos.x() - 1);
-		break;
-	default:
-		arrowKey = false;
-		break;
-	}
-	if (arrowKey)
-	{
-		move(newPos);
-		return true;
-	}
 	return false;
 }

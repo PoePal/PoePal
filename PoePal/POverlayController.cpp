@@ -16,6 +16,7 @@
 #include "POverlayController.h"
 #include "POverlayBarWidget.h"
 #include "POverlayChatWidget.h"
+#include <QDebug>
 #include <QScreen>
 #include <QSettings>
 #include "windows.h"
@@ -40,13 +41,20 @@ POverlayController::~POverlayController()
 
 void POverlayController::Initialize()
 {
+	// Load the style sheet so we can apply it to the new widgets.
+	QFile styleFile(":/PoePal/Resources/OverlayStylesheet.qss");
+	if (!styleFile.open(QIODevice::ReadOnly))
+	{
+		qFatal("Could not load overlay stylesheet.");
+	}
+	_OverlayStyle = QString::fromLatin1(styleFile.readAll());
+
 	// Initialize the chat widgets.
 	_BarWidget = new POverlayBarWidget();
 	_BarWidget->hide();
 	InstallArrowFilter(_BarWidget);
 	_ChatWidget = new POverlayChatWidget();
 	_ChatWidget->hide();
-	_ChatWidget->setStyleSheet(_BarWidget->styleSheet());
 	InstallArrowFilter(_ChatWidget);
 
 	// Set up the timer that checks for the game being active.
@@ -85,6 +93,11 @@ bool POverlayController::IsChatVisible() const
 bool POverlayController::IsGameActive() const
 {
 	return _GameActive;
+}
+
+QString POverlayController::GetStyleSheet() const
+{
+	return _OverlayStyle;
 }
 
 void POverlayController::Lock()

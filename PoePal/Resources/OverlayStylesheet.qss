@@ -1,0 +1,186 @@
+QWidget {
+	background: rgb(50,50,50);
+	color: white;
+}
+QPushButton,
+QToolButton {
+	padding: 1px;
+	border: 1px solid rgb(125,100,70);
+}
+QPushButton:hover,
+QToolButton:hover {
+	background: rgb(80, 80, 80);
+}
+QToolButton::menu-arrow {
+	width: 0px;
+	image: url(none.jpg);
+}
+QToolButton::menu-button {
+	background: transparent;
+}
+QPushButton:pressed, QPushButton:checked {
+	background: rgb(120, 120, 120);
+}
+POverlayChatWidget QListWidget {
+	border-left: 1px solid rgb(125,100,70);
+	border-top: 1px solid rgb(125,100,70);
+	border-right: 1px solid rgb(125,100,70);
+}
+POverlayChatWidget QStackedWidget {
+	border-top: 1px solid rgb(125,100,70);
+	border-right: 1px solid rgb(125,100,70);
+}
+POverlayChatWidget QListView::item,
+POverlayChatWidget QListView::item:selected {
+	background: transparent;
+	border: 1px solid rgb(125,100,70);
+}
+QTabBar::tab {
+	background: rgb(80,80,80);
+	border: 1px solid rgb(125,100,70);
+	color: white;
+	padding: 4px;
+}
+PVerticalTabBarWidget {
+	background: transparent;
+	border-bottom: 1px solid rgb(125,100,70);
+}
+PVerticalTabBarWidget .QLabel{
+	background: transparent;
+}
+PVerticalTabBarWidget .QPushButton{
+	border: none;
+	margin-left: 1px;
+	border-right: 1px solid rgb(125,100,70);
+}
+QTabBar::tab:selected {
+	background: rgb(120,120,120);
+}
+QTabWidget::tab-bar {
+	background: rgba(0, 0, 0, 0);
+}
+QTabWidget::pane {
+	border: 1px solid rgb(125,100,70);
+}
+QDockWidget {
+	background: rgba(0, 0, 0, 0);
+	border: 1px solid rgb(125,100,70);
+}
+QPlainTextEdit {
+	border: 1px solid rgb(125,100,70);
+}
+.POverlayChatWidget .PVerticalTabWidget .QPlainTextEdit
+{
+	border: none;
+}
+.QListWidget::item{
+	background: transparent;
+	border: none;
+}
+
+.QListWidget::item:selected{
+	background: rgb(80,80,80);
+	margin-left: 1px;
+	margin-right: -1px;
+	border-right: 1px solid rgb(80,80,80);
+}
+.QScrollBar:horizontal {
+  height: 10px;
+  border: 1px solid rgb(125,100,70);
+  background: transparent;
+}
+
+.QScrollBar:vertical {
+  background: transparent;
+  width: 10px;
+  border-left: 1px solid rgb(125,100,70);
+}
+.QListWidget .QScrollBar:vertical {
+  border-right: 1px solid rgb(125,100,70);
+  border-left: none;
+  margin-right: 1px;
+}
+
+.QScrollBar::handle:horizontal {
+  background-color: rgb(80,80,80);
+  border: 1px solid rgb(125,100,70);
+  border-radius: 4px;
+  min-width: 8px;
+}
+
+.QScrollBar::handle:vertical {
+  background-color: rgb(80,80,80);
+  border: 1px solid rgb(125,100,70);
+  min-height: 8px;
+  border-radius: 4px;
+  margin: 1px;
+}
+
+.QScrollBar::handle:horizontal:hover {
+  background-color: rgb(100,100,100);
+  border-radius: 4px;
+  min-width: 8px;
+}
+
+.QScrollBar::handle:vertical:hover {
+  background-color: rgb(100,100,100);
+  border-radius: 4px;
+  min-height: 8px;
+}
+
+.QScrollBar::add-line:horizontal {
+  margin: 0px 0px 0px 0px;
+  border-image: url(":/qss_icons/rc/arrow_right_disabled.png");
+  height: 12px;
+  width: 12px;
+  subcontrol-position: right;
+  subcontrol-origin: margin;
+}
+
+.QScrollBar::add-line:horizontal:hover, QScrollBar::add-line:horizontal:on {
+  border-image: url(":/qss_icons/rc/arrow_right.png");
+  height: 12px;
+  width: 12px;
+  subcontrol-position: right;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical{
+	height: 0px;
+}
+
+QScrollBar::sub-line:horizontal {
+  margin: 0px 3px 0px 3px;
+  border-image: url(":/qss_icons/rc/arrow_left_disabled.png");
+  height: 12px;
+  width: 12px;
+  subcontrol-position: left;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal:hover, QScrollBar::sub-line:horizontal:on {
+  border-image: url(":/qss_icons/rc/arrow_left.png");
+  height: 12px;
+  width: 12px;
+  subcontrol-position: left;
+  subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal {
+  background: none;
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+  background: none;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+  background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+  background: none;
+}

@@ -25,7 +25,12 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 	QWidget(parent)
 {
 	setupUi(this);
-	
+
+	// Get the style sheet and apply it here.
+	auto app = qobject_cast<PApplication*>(qApp);
+	auto controller = app->GetOverlayController();
+	setStyleSheet(controller->GetStyleSheet());
+
 	setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 
@@ -39,11 +44,14 @@ POverlayBarWidget::POverlayBarWidget(QWidget* parent /*= nullptr*/):
 		QIcon::Normal, QIcon::Off);
 	_UnlockAction = _ConfigMenu.addAction(unlockIcon, tr("Unlock"));
 	_UnlockAction->setVisible(false);
+	QIcon exitIcon;
+	exitIcon.addFile(QString::fromUtf8(":/PoePal/Resources/32x32/cross.png"), QSize(),
+		QIcon::Normal, QIcon::Off);
+	_ExitAction = _ConfigMenu.addAction(exitIcon, tr("Exit"));
 	// Connect the lock/unlock to the controller.
-	auto app = qobject_cast<PApplication*>(qApp);
-	auto controller = app->GetOverlayController();
 	connect(_LockAction, &QAction::triggered, controller, &POverlayController::Lock);
 	connect(_UnlockAction, &QAction::triggered, controller, &POverlayController::Unlock);
+	connect(_ExitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 	connect(controller, &POverlayController::LockStateChanged, _LockAction, 
 		[this](POverlayController::LockState state) {
 			_LockAction->setVisible(state == POverlayController::OverlayUnlocked || 

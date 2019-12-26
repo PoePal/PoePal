@@ -112,6 +112,13 @@ public:
 	 */
 	bool IsGameActive() const;
 
+	/**
+	 * Retrieves the overlay style sheet.
+	 * @return
+	 *   The overlay style sheet to use for all widgets.
+	 */
+	QString GetStyleSheet() const;
+
 signals:
 
 	/**
@@ -301,5 +308,10 @@ private:
 	 * Indicates whether or not the chat widget should be shown.
 	 */
 	bool _ChatVisible = false;
+
+	/**
+	 * The stylesheet shared for the overlay widgets.
+	 */
+	QString _OverlayStyle;
 
 };

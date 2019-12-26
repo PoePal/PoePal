@@ -1,54 +1,55 @@
 <RCC>
-  <qresource prefix="/PoePal">
-    <file>Resources/32x32/cross.png</file>
-    <file>Resources/32x32/cancel.png</file>
-    <file>Resources/32x32/delete.png</file>
-    <file>Resources/32x32/lock_open.png</file>
-    <file>Resources/32x32/lock.png</file>
-    <file>Resources/32x32/cog.png</file>
-    <file>Resources/32x32/helmet_mine.png</file>
-    <file>Resources/32x32/status_autoreply.png</file>
-    <file>Resources/32x32/status_online.png</file>
-    <file>Resources/32x32/status_busy.png</file>
-    <file>Resources/32x32/do_not_disturb.png</file>
-    <file>Resources/32x32/status_away.png</file>
-    <file>Resources/32x32/vcard.png</file>
-    <file>Resources/32x32/stickman.png</file>
-    <file>Resources/32x32/arrow_refresh.png</file>
-    <file>Resources/32x32/sword.png</file>
-    <file>Resources/32x32/counter.png</file>
-    <file>Resources/32x32/user_death.png</file>
-    <file>Resources/32x32/date.png</file>
-    <file>Resources/32x32/stopwatch_start.png</file>
-    <file>Resources/32x32/text_list_numbers.png</file>
-    <file>Resources/32x32/chameleon.png</file>
-    <file>Resources/32x32/to_do_list_checked_all.png</file>
-    <file>Resources/32x32/download_for_windows.png</file>
-    <file>Resources/32x32/comment_edit.png</file>
-    <file>Resources/32x32/application_xp_terminal.png</file>
-    <file>Resources/32x32/account_menu.png</file>
-    <file>Resources/32x32/user_delete.png</file>
-    <file>Resources/32x32/user_add.png</file>
-    <file>Resources/32x32/comment_delete.png</file>
-    <file>Resources/32x32/comment_add.png</file>
-    <file>Resources/32x32/script_go.png</file>
-    <file>Resources/32x32/bug.png</file>
-    <file>Resources/32x32/house.png</file>
-    <file>Resources/32x32/events.png</file>
-    <file>Resources/32x32/money_dollar.png</file>
-    <file>Resources/32x32/party_hat.png</file>
-    <file>Resources/32x32/earth_night.png</file>
-    <file>Resources/32x32/shield.png</file>
-    <file>Resources/32x32/text_document.png</file>
-    <file>Resources/32x32/comment.png</file>
-    <file>Resources/32x32/show_comment.png</file>
-    <file>Resources/logo.png</file>
-  </qresource>
-  <qresource prefix="/">
-    <file alias="updates.html">Resources/updates.html</file>
-  </qresource>
-  <qresource prefix="/3rdParty">
-    <file alias="marked.js">Resources/3rdParty/marked.js</file>
-    <file alias="github-markdown.css">Resources/3rdParty/github-markdown.css</file>
-  </qresource>
+    <qresource prefix="/PoePal">
+        <file>Resources/32x32/cross.png</file>
+        <file>Resources/32x32/cancel.png</file>
+        <file>Resources/32x32/delete.png</file>
+        <file>Resources/32x32/lock_open.png</file>
+        <file>Resources/32x32/lock.png</file>
+        <file>Resources/32x32/cog.png</file>
+        <file>Resources/32x32/helmet_mine.png</file>
+        <file>Resources/32x32/status_autoreply.png</file>
+        <file>Resources/32x32/status_online.png</file>
+        <file>Resources/32x32/status_busy.png</file>
+        <file>Resources/32x32/do_not_disturb.png</file>
+        <file>Resources/32x32/status_away.png</file>
+        <file>Resources/32x32/vcard.png</file>
+        <file>Resources/32x32/stickman.png</file>
+        <file>Resources/32x32/arrow_refresh.png</file>
+        <file>Resources/32x32/sword.png</file>
+        <file>Resources/32x32/counter.png</file>
+        <file>Resources/32x32/user_death.png</file>
+        <file>Resources/32x32/date.png</file>
+        <file>Resources/32x32/stopwatch_start.png</file>
+        <file>Resources/32x32/text_list_numbers.png</file>
+        <file>Resources/32x32/chameleon.png</file>
+        <file>Resources/32x32/to_do_list_checked_all.png</file>
+        <file>Resources/32x32/download_for_windows.png</file>
+        <file>Resources/32x32/comment_edit.png</file>
+        <file>Resources/32x32/application_xp_terminal.png</file>
+        <file>Resources/32x32/account_menu.png</file>
+        <file>Resources/32x32/user_delete.png</file>
+        <file>Resources/32x32/user_add.png</file>
+        <file>Resources/32x32/comment_delete.png</file>
+        <file>Resources/32x32/comment_add.png</file>
+        <file>Resources/32x32/script_go.png</file>
+        <file>Resources/32x32/bug.png</file>
+        <file>Resources/32x32/house.png</file>
+        <file>Resources/32x32/events.png</file>
+        <file>Resources/32x32/money_dollar.png</file>
+        <file>Resources/32x32/party_hat.png</file>
+        <file>Resources/32x32/earth_night.png</file>
+        <file>Resources/32x32/shield.png</file>
+        <file>Resources/32x32/text_document.png</file>
+        <file>Resources/32x32/comment.png</file>
+        <file>Resources/32x32/show_comment.png</file>
+        <file>Resources/logo.png</file>
+        <file>Resources/OverlayStylesheet.qss</file>
+    </qresource>
+    <qresource prefix="/">
+        <file alias="updates.html">Resources/updates.html</file>
+    </qresource>
+    <qresource prefix="/3rdParty">
+        <file alias="marked.js">Resources/3rdParty/marked.js</file>
+        <file alias="github-markdown.css">Resources/3rdParty/github-markdown.css</file>
+    </qresource>
 </RCC>

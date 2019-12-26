@@ -16,7 +16,7 @@
 #include "PVerticalTabBarWidget.h"
 
 PVerticalTabBarWidget::PVerticalTabBarWidget(QWidget* parent /*= nullptr*/):
-QWidget(parent)
+	QFrame(parent)
 {
 	setupUi(this);
 	setLayoutDirection(Qt::LeftToRight);
